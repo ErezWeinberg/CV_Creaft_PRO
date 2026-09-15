@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CV Craft PRO - Main Application Logic (Vanilla ES6)
+   CV Craft PRO - Main Application Logic & Translation Engine
    ========================================================================== */
 
 (function () {
@@ -21,10 +21,10 @@
   // LocalStorage Key
   const STORAGE_KEY = 'cv_craft_pro_state_v1';
 
-  // DOM Elements Cache
+  // DOM Cache
   const el = {};
 
-  // Initialize App
+  // Initialize
   function init() {
     cacheDOMElements();
     loadStateFromStorage();
@@ -33,20 +33,25 @@
   }
 
   function cacheDOMElements() {
-    // Buttons & Header
     el.btnLangHe = document.getElementById('btn-lang-he');
     el.btnLangEn = document.getElementById('btn-lang-en');
+    el.btnAutoTranslate = document.getElementById('btn-auto-translate');
+    el.lblTranslate = document.getElementById('lbl-translate');
     el.btnThemeToggle = document.getElementById('btn-theme-toggle');
     el.btnSampleData = document.getElementById('btn-sample-data');
     el.btnExportJson = document.getElementById('btn-export-json');
+    el.btnExportTxt = document.getElementById('btn-export-txt');
     el.inputImportJson = document.getElementById('input-import-json');
     el.btnPrint = document.getElementById('btn-print');
 
-    // Tabs
+    // ATS Score
+    el.atsScoreVal = document.getElementById('ats-score-val');
+    el.atsScoreFill = document.getElementById('ats-score-fill');
+    el.atsSuggestionsList = document.getElementById('ats-suggestions-list');
+
+    // Navigation Tabs
     el.navTabs = document.querySelectorAll('.nav-tab');
     el.tabContents = document.querySelectorAll('.tab-content');
-
-    // Accordions
     el.accordionHeaders = document.querySelectorAll('.accordion-header');
 
     // Form Personal Fields
@@ -59,10 +64,11 @@
     el.fieldGithub = document.getElementById('field-github');
     el.fieldWebsite = document.getElementById('field-website');
     el.fieldSummary = document.getElementById('field-summary');
+    el.btnAiEnhanceSummary = document.getElementById('btn-ai-enhance-summary');
     el.fieldLanguages = document.getElementById('field-languages');
     el.fieldCertifications = document.getElementById('field-certifications');
 
-    // Dynamic Lists Containers
+    // Dynamic Lists
     el.experienceList = document.getElementById('experience-list');
     el.educationList = document.getElementById('education-list');
     el.skillsList = document.getElementById('skills-list');
@@ -86,13 +92,14 @@
     el.sliderSpacing = document.getElementById('slider-spacing');
     el.valSpacing = document.getElementById('val-spacing');
 
-    // Zoom Controls
+    // Zoom Controls & Status
     el.btnZoomOut = document.getElementById('btn-zoom-out');
     el.btnZoomIn = document.getElementById('btn-zoom-in');
     el.btnZoomReset = document.getElementById('btn-zoom-reset');
     el.zoomLevelText = document.getElementById('zoom-level');
+    el.translationLoader = document.getElementById('translation-loader');
 
-    // Resume Preview Element
+    // Resume Preview
     el.resumePreview = document.getElementById('resume-preview');
   }
 
@@ -101,7 +108,7 @@
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch (e) {
-      console.warn('Could not save to LocalStorage:', e);
+      console.warn('LocalStorage error:', e);
     }
   }
 
@@ -109,44 +116,41 @@
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
-        const parsed = JSON.parse(saved);
-        state = { ...state, ...parsed };
+        state = { ...state, ...JSON.parse(saved) };
       }
     } catch (e) {
-      console.warn('Could not load state:', e);
+      console.warn('Load state error:', e);
     }
   }
 
-  // --- EVENT BINDING ---
+  // --- EVENT BINDINGS ---
   function bindEvents() {
-    // Language Toggle
     el.btnLangHe.addEventListener('click', () => setLanguage('he'));
     el.btnLangEn.addEventListener('click', () => setLanguage('en'));
+    el.btnAutoTranslate.addEventListener('click', autoTranslateAllContent);
 
-    // Theme Toggle
     if (el.btnThemeToggle) {
       el.btnThemeToggle.addEventListener('click', toggleTheme);
     }
 
-    // Sample Data Button
     el.btnSampleData.addEventListener('click', () => {
       const isHe = state.lang === 'he';
       state.cv = JSON.parse(JSON.stringify(isHe ? sampleDataHebrew : sampleDataEnglish));
       renderFormFromState();
       renderPreview();
+      calculateAtsScore();
       saveStateToStorage();
     });
 
-    // JSON Export / Import
     el.btnExportJson.addEventListener('click', exportJson);
+    el.btnExportTxt.addEventListener('click', exportTxt);
     el.inputImportJson.addEventListener('change', importJson);
+    el.btnPrint.addEventListener('click', () => window.print());
 
-    // Print / PDF Export
-    el.btnPrint.addEventListener('click', () => {
-      window.print();
-    });
+    if (el.btnAiEnhanceSummary) {
+      el.btnAiEnhanceSummary.addEventListener('click', aiEnhanceSummary);
+    }
 
-    // Navigation Tabs Switcher
     el.navTabs.forEach(tab => {
       tab.addEventListener('click', () => {
         const targetTab = tab.dataset.tab;
@@ -157,15 +161,12 @@
       });
     });
 
-    // Accordion Toggle
     el.accordionHeaders.forEach(header => {
       header.addEventListener('click', () => {
-        const item = header.closest('.accordion-item');
-        item.classList.toggle('expanded');
+        header.closest('.accordion-item').classList.toggle('expanded');
       });
     });
 
-    // Form inputs change listeners
     bindFormInput(el.fieldFullName, 'personal', 'fullName');
     bindFormInput(el.fieldJobTitle, 'personal', 'jobTitle');
     bindFormInput(el.fieldEmail, 'personal', 'email');
@@ -178,13 +179,11 @@
     bindFormInput(el.fieldLanguages, 'languages');
     bindFormInput(el.fieldCertifications, 'certifications');
 
-    // Add Dynamic Items
     el.btnAddExperience.addEventListener('click', addExperienceItem);
     el.btnAddEducation.addEventListener('click', addEducationItem);
     el.btnAddSkillCat.addEventListener('click', addSkillItem);
     el.btnAddProject.addEventListener('click', addProjectItem);
 
-    // Template Picker
     el.templateCards.forEach(card => {
       card.addEventListener('click', () => {
         el.templateCards.forEach(c => c.classList.remove('active'));
@@ -195,7 +194,6 @@
       });
     });
 
-    // Design Color Swatches
     el.colorSwatches.forEach(swatch => {
       swatch.addEventListener('click', () => {
         el.colorSwatches.forEach(s => s.classList.remove('active'));
@@ -204,18 +202,14 @@
       });
     });
 
-    el.customColorPicker.addEventListener('input', (e) => {
-      setAccentColor(e.target.value);
-    });
+    el.customColorPicker.addEventListener('input', (e) => setAccentColor(e.target.value));
 
-    // Font Family Select
     el.selectFontFamily.addEventListener('change', (e) => {
       state.fontFamily = e.target.value;
       renderPreview();
       saveStateToStorage();
     });
 
-    // Font Size Slider
     el.sliderFontSize.addEventListener('input', (e) => {
       state.fontSize = parseFloat(e.target.value);
       el.valFontSize.textContent = `${state.fontSize}px`;
@@ -223,7 +217,6 @@
       saveStateToStorage();
     });
 
-    // Spacing Slider
     el.sliderSpacing.addEventListener('input', (e) => {
       state.spacing = parseFloat(e.target.value);
       el.valSpacing.textContent = state.spacing < 1 ? 'דחוס' : state.spacing === 1 ? 'רגיל' : 'מרווח';
@@ -231,7 +224,6 @@
       saveStateToStorage();
     });
 
-    // Zoom Controls
     el.btnZoomIn.addEventListener('click', () => adjustZoom(0.1));
     el.btnZoomOut.addEventListener('click', () => adjustZoom(-0.1));
     el.btnZoomReset.addEventListener('click', () => {
@@ -240,6 +232,227 @@
     });
   }
 
+  function bindFormInput(inputElement, statePath1, statePath2) {
+    if (!inputElement) return;
+    inputElement.addEventListener('input', (e) => {
+      if (statePath2) {
+        state.cv[statePath1][statePath2] = e.target.value;
+      } else {
+        state.cv[statePath1] = e.target.value;
+      }
+      renderPreview();
+      calculateAtsScore();
+      saveStateToStorage();
+    });
+  }
+
+  // --- REAL-TIME TRANSLATION ENGINE ---
+  async function translateTextOnline(text, fromLang, toLang) {
+    if (!text || text.trim() === '') return text;
+    try {
+      const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${fromLang}|${toLang}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data && data.responseData && data.responseData.translatedText) {
+        return data.responseData.translatedText;
+      }
+    } catch (e) {
+      console.warn('Online translation error, falling back to local:', e);
+    }
+    return text;
+  }
+
+  async function autoTranslateAllContent() {
+    const targetLang = state.lang === 'he' ? 'en' : 'he';
+    const sourceLang = state.lang;
+    
+    if (el.translationLoader) el.translationLoader.style.display = 'flex';
+    el.btnAutoTranslate.disabled = true;
+
+    try {
+      // Personal Title & Location
+      if (state.cv.personal.jobTitle) {
+        state.cv.personal.jobTitle = await translateTextOnline(state.cv.personal.jobTitle, sourceLang, targetLang);
+      }
+      if (state.cv.personal.location) {
+        state.cv.personal.location = await translateTextOnline(state.cv.personal.location, sourceLang, targetLang);
+      }
+
+      // Summary
+      if (state.cv.summary) {
+        state.cv.summary = await translateTextOnline(state.cv.summary, sourceLang, targetLang);
+      }
+
+      // Experiences
+      if (state.cv.experiences) {
+        for (let exp of state.cv.experiences) {
+          if (exp.jobTitle) exp.jobTitle = await translateTextOnline(exp.jobTitle, sourceLang, targetLang);
+          if (exp.company) exp.company = await translateTextOnline(exp.company, sourceLang, targetLang);
+          if (exp.description) exp.description = await translateTextOnline(exp.description, sourceLang, targetLang);
+        }
+      }
+
+      // Education
+      if (state.cv.education) {
+        for (let edu of state.cv.education) {
+          if (edu.degree) edu.degree = await translateTextOnline(edu.degree, sourceLang, targetLang);
+          if (edu.institution) edu.institution = await translateTextOnline(edu.institution, sourceLang, targetLang);
+          if (edu.details) edu.details = await translateTextOnline(edu.details, sourceLang, targetLang);
+        }
+      }
+
+      // Skills
+      if (state.cv.skills) {
+        for (let sk of state.cv.skills) {
+          if (sk.category) sk.category = await translateTextOnline(sk.category, sourceLang, targetLang);
+        }
+      }
+
+      // Projects
+      if (state.cv.projects) {
+        for (let proj of state.cv.projects) {
+          if (proj.title) proj.title = await translateTextOnline(proj.title, sourceLang, targetLang);
+          if (proj.description) proj.description = await translateTextOnline(proj.description, sourceLang, targetLang);
+        }
+      }
+
+      // Languages & Certs
+      if (state.cv.languages) state.cv.languages = await translateTextOnline(state.cv.languages, sourceLang, targetLang);
+      if (state.cv.certifications) state.cv.certifications = await translateTextOnline(state.cv.certifications, sourceLang, targetLang);
+
+      // Switch UI language after translation completes
+      setLanguage(targetLang);
+      renderFormFromState();
+      renderPreview();
+      calculateAtsScore();
+      saveStateToStorage();
+
+    } catch (err) {
+      console.error('Translation error:', err);
+    } finally {
+      if (el.translationLoader) el.translationLoader.style.display = 'none';
+      el.btnAutoTranslate.disabled = false;
+    }
+  }
+
+  // --- AI ENHANCE SUMMARY SIMULATOR ---
+  function aiEnhanceSummary() {
+    const isHe = state.lang === 'he';
+    if (isHe) {
+      state.cv.summary = 'מפתח Full-Stack בכיר בעל ניסיון מוכח של מעל 6 שנות בהובלת ארכיטקטורת תוכנה, פיתוח מערכות ענן מבוזרות ב-React, Node.js ו-AWS. מומחה באופטימיזציית ביצועי Client-Side, הקטנת זמני טעינה ב-45% והובלת צוותים טכנולוגיים להישגים יוצאי דופן.';
+    } else {
+      state.cv.summary = 'Results-oriented Senior Full-Stack Engineer with 6+ years of expertise designing and architecting scalable cloud platforms in React, Node.js, and AWS. Proven track record of optimizing client-side rendering latency by 45% and leading cross-functional developer teams to deliver mission-critical software.';
+    }
+    el.fieldSummary.value = state.cv.summary;
+    renderPreview();
+    calculateAtsScore();
+    saveStateToStorage();
+  }
+
+  // --- REAL-TIME ATS SCORE CALCULATOR ---
+  function calculateAtsScore() {
+    let score = 0;
+    const suggestions = [];
+    const p = state.cv.personal || {};
+    const isHe = state.lang === 'he';
+
+    // 1. Personal details check (20 points)
+    if (p.fullName && p.jobTitle && (p.email || p.phone)) {
+      score += 20;
+      suggestions.push({
+        type: 'pass',
+        title: isHe ? 'פרטי התקשרות מלאים' : 'Contact Details Complete',
+        desc: isHe ? 'השם, התואר ופרטי ליצירת קשר הוזנו כראוי.' : 'Name, title, and contact details entered.'
+      });
+    } else {
+      suggestions.push({
+        type: 'warn',
+        title: isHe ? 'חסרים פרטי התקשרות' : 'Missing Contact Info',
+        desc: isHe ? 'מומלץ למלא אימייל, טלפון ועיר מגורים.' : 'Add your email, phone number, and location.'
+      });
+    }
+
+    // 2. Summary check (20 points)
+    const summaryLen = (state.cv.summary || '').length;
+    if (summaryLen > 80 && summaryLen < 500) {
+      score += 20;
+      suggestions.push({
+        type: 'pass',
+        title: isHe ? 'תמצית מקצועית ממוקדת' : 'Strong Professional Summary',
+        desc: isHe ? 'אורך הפסקה אידיאלי לקריאה מהירה של מגייסים.' : 'Ideal summary length for quick recruiter scanning.'
+      });
+    } else {
+      suggestions.push({
+        type: 'warn',
+        title: isHe ? 'שפר תמצית מקצועית' : 'Optimize Summary',
+        desc: isHe ? 'כתוב 2-4 משפטים המדגישים את הניסיון והמומחיות שלך.' : 'Write 2-4 punchy sentences summarizing your expertise.'
+      });
+    }
+
+    // 3. Experience check & bullet points (25 points)
+    const expCount = (state.cv.experiences || []).length;
+    if (expCount >= 1) {
+      score += 15;
+      const hasBullets = state.cv.experiences.some(e => (e.description || '').includes('•') || (e.description || '').includes('-'));
+      if (hasBullets) score += 10;
+      suggestions.push({
+        type: 'pass',
+        title: isHe ? 'ניסיון תעסוקתי מפורט' : 'Work Experience Detailed',
+        desc: isHe ? `הוזנו ${expCount} תפקידים עם תיאור נקודתי.` : `${expCount} roles listed with bullet points.`
+      });
+    } else {
+      suggestions.push({
+        type: 'warn',
+        title: isHe ? 'הוסף ניסיון תעסוקתי' : 'Add Work Experience',
+        desc: isHe ? 'מערכות ATS מחפשות לפחות תפקיד אחד מפורט.' : 'ATS systems search for detailed recent roles.'
+      });
+    }
+
+    // 4. Quantifiable Metrics Check (Numbers/%) (20 points)
+    const fullText = JSON.stringify(state.cv);
+    const hasNumbers = /\d+%|\d+\+|\$\d+/.test(fullText);
+    if (hasNumbers) {
+      score += 20;
+      suggestions.push({
+        type: 'pass',
+        title: isHe ? 'שילוב מדדים כמותיים (Metrics)' : 'Quantifiable Metrics Included',
+        desc: isHe ? 'כלולים אחוזים ומספרים המוכחים הישגים (כמו 40%, 5+).' : 'Contains numbers and percentages showing tangible impact.'
+      });
+    } else {
+      suggestions.push({
+        type: 'warn',
+        title: isHe ? 'הוסף מדדים כמותיים' : 'Add Quantifiable Results',
+        desc: isHe ? 'מגייסים מעדיפים שורות כמו: "שיפרתי ביצועים ב-30%".' : 'Include metrics like: "Improved API latency by 35%".'
+      });
+    }
+
+    // 5. Skills Density (15 points)
+    const skillsCount = (state.cv.skills || []).length;
+    if (skillsCount >= 1) {
+      score += 15;
+      suggestions.push({
+        type: 'pass',
+        title: isHe ? 'קטגוריות כישורים מוגדרות' : 'Technical Skills Categorized',
+        desc: isHe ? 'מילות המפתח הטכנולוגיות מסודרות היטב לסורקי ATS.' : 'Keywords are organized for ATS parsers.'
+      });
+    }
+
+    // Render ATS UI
+    score = Math.min(100, Math.max(0, score));
+    if (el.atsScoreVal) el.atsScoreVal.textContent = `${score}%`;
+    if (el.atsScoreFill) el.atsScoreFill.style.width = `${score}%`;
+
+    if (el.atsSuggestionsList) {
+      el.atsSuggestionsList.innerHTML = suggestions.map(s => `
+        <div class="tip-card ${s.type}">
+          <h4><i class="fa-solid ${s.type === 'pass' ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i> ${s.title}</h4>
+          <p>${s.desc}</p>
+        </div>
+      `).join('');
+    }
+  }
+
+  // --- STATE HANDLERS ---
   function toggleTheme() {
     state.theme = state.theme === 'dark' ? 'light' : 'dark';
     applyTheme();
@@ -258,20 +471,6 @@
     }
   }
 
-  function bindFormInput(inputElement, statePath1, statePath2) {
-    if (!inputElement) return;
-    inputElement.addEventListener('input', (e) => {
-      if (statePath2) {
-        state.cv[statePath1][statePath2] = e.target.value;
-      } else {
-        state.cv[statePath1] = e.target.value;
-      }
-      renderPreview();
-      saveStateToStorage();
-    });
-  }
-
-  // Set Language (RTL vs LTR)
   function setLanguage(lang) {
     state.lang = lang;
     document.body.dir = lang === 'he' ? 'rtl' : 'ltr';
@@ -279,14 +478,18 @@
 
     el.btnLangHe.classList.toggle('active', lang === 'he');
     el.btnLangEn.classList.toggle('active', lang === 'en');
+    
+    if (el.lblTranslate) {
+      el.lblTranslate.textContent = lang === 'he' ? 'תרגם לאנגלית' : 'Translate to Hebrew';
+    }
 
-    // Auto update font default if switching language
     if (lang === 'en' && state.fontFamily.includes('Heebo')) {
       state.fontFamily = "'Inter', sans-serif";
       el.selectFontFamily.value = state.fontFamily;
     }
 
     renderPreview();
+    calculateAtsScore();
     saveStateToStorage();
   }
 
@@ -307,7 +510,7 @@
     el.zoomLevelText.textContent = `${Math.round(state.zoom * 100)}%`;
   }
 
-  // --- DYNAMIC ITEMS HANDLERS ---
+  // Add Dynamic List Items
   function addExperienceItem() {
     state.cv.experiences.push({
       id: 'exp-' + Date.now(),
@@ -320,6 +523,7 @@
     });
     renderDynamicLists();
     renderPreview();
+    calculateAtsScore();
     saveStateToStorage();
   }
 
@@ -335,6 +539,7 @@
     });
     renderDynamicLists();
     renderPreview();
+    calculateAtsScore();
     saveStateToStorage();
   }
 
@@ -346,6 +551,7 @@
     });
     renderDynamicLists();
     renderPreview();
+    calculateAtsScore();
     saveStateToStorage();
   }
 
@@ -359,10 +565,11 @@
     });
     renderDynamicLists();
     renderPreview();
+    calculateAtsScore();
     saveStateToStorage();
   }
 
-  // --- RENDER FORM UI FROM STATE ---
+  // --- RENDER FORM UI ---
   function renderFormFromState() {
     const p = state.cv.personal || {};
     el.fieldFullName.value = p.fullName || '';
@@ -377,7 +584,6 @@
     el.fieldLanguages.value = state.cv.languages || '';
     el.fieldCertifications.value = state.cv.certifications || '';
 
-    // Active Template Card
     el.templateCards.forEach(c => {
       c.classList.toggle('active', c.dataset.template === state.template);
     });
@@ -386,7 +592,7 @@
   }
 
   function renderDynamicLists() {
-    // Experiences List
+    // Experience List
     el.experienceList.innerHTML = (state.cv.experiences || []).map((item, idx) => `
       <div class="dynamic-card" data-id="${item.id}">
         <div class="dynamic-card-header">
@@ -446,7 +652,7 @@
       </div>
     `).join('');
 
-    // Skills List
+    // Skill List
     el.skillsList.innerHTML = (state.cv.skills || []).map((item, idx) => `
       <div class="dynamic-card" data-id="${item.id}">
         <div class="dynamic-card-header">
@@ -466,7 +672,7 @@
       </div>
     `).join('');
 
-    // Projects List
+    // Project List
     el.projectsList.innerHTML = (state.cv.projects || []).map((item, idx) => `
       <div class="dynamic-card" data-id="${item.id}">
         <div class="dynamic-card-header">
@@ -498,99 +704,89 @@
   }
 
   function bindDynamicInputs() {
-    // Experience inputs
     document.querySelectorAll('.exp-title').forEach(inp => inp.addEventListener('input', e => {
       state.cv.experiences[e.target.dataset.idx].jobTitle = e.target.value;
-      renderPreview(); saveStateToStorage();
+      renderPreview(); calculateAtsScore(); saveStateToStorage();
     }));
     document.querySelectorAll('.exp-company').forEach(inp => inp.addEventListener('input', e => {
       state.cv.experiences[e.target.dataset.idx].company = e.target.value;
-      renderPreview(); saveStateToStorage();
+      renderPreview(); calculateAtsScore(); saveStateToStorage();
     }));
     document.querySelectorAll('.exp-start').forEach(inp => inp.addEventListener('input', e => {
       state.cv.experiences[e.target.dataset.idx].startDate = e.target.value;
-      renderPreview(); saveStateToStorage();
+      renderPreview(); calculateAtsScore(); saveStateToStorage();
     }));
     document.querySelectorAll('.exp-end').forEach(inp => inp.addEventListener('input', e => {
       state.cv.experiences[e.target.dataset.idx].endDate = e.target.value;
-      renderPreview(); saveStateToStorage();
+      renderPreview(); calculateAtsScore(); saveStateToStorage();
     }));
     document.querySelectorAll('.exp-desc').forEach(inp => inp.addEventListener('input', e => {
       state.cv.experiences[e.target.dataset.idx].description = e.target.value;
-      renderPreview(); saveStateToStorage();
+      renderPreview(); calculateAtsScore(); saveStateToStorage();
     }));
 
-    // Delete Buttons
     document.querySelectorAll('.btn-delete-exp').forEach(btn => btn.addEventListener('click', e => {
-      const idx = e.currentTarget.dataset.idx;
-      state.cv.experiences.splice(idx, 1);
-      renderDynamicLists(); renderPreview(); saveStateToStorage();
+      state.cv.experiences.splice(e.currentTarget.dataset.idx, 1);
+      renderDynamicLists(); renderPreview(); calculateAtsScore(); saveStateToStorage();
     }));
 
-    // Skill inputs
     document.querySelectorAll('.sk-cat').forEach(inp => inp.addEventListener('input', e => {
       state.cv.skills[e.target.dataset.idx].category = e.target.value;
-      renderPreview(); saveStateToStorage();
+      renderPreview(); calculateAtsScore(); saveStateToStorage();
     }));
     document.querySelectorAll('.sk-items').forEach(inp => inp.addEventListener('input', e => {
       state.cv.skills[e.target.dataset.idx].items = e.target.value;
-      renderPreview(); saveStateToStorage();
+      renderPreview(); calculateAtsScore(); saveStateToStorage();
     }));
     document.querySelectorAll('.btn-delete-skill').forEach(btn => btn.addEventListener('click', e => {
-      const idx = e.currentTarget.dataset.idx;
-      state.cv.skills.splice(idx, 1);
-      renderDynamicLists(); renderPreview(); saveStateToStorage();
+      state.cv.skills.splice(e.currentTarget.dataset.idx, 1);
+      renderDynamicLists(); renderPreview(); calculateAtsScore(); saveStateToStorage();
     }));
 
-    // Education inputs
     document.querySelectorAll('.edu-degree').forEach(inp => inp.addEventListener('input', e => {
       state.cv.education[e.target.dataset.idx].degree = e.target.value;
-      renderPreview(); saveStateToStorage();
+      renderPreview(); calculateAtsScore(); saveStateToStorage();
     }));
     document.querySelectorAll('.edu-inst').forEach(inp => inp.addEventListener('input', e => {
       state.cv.education[e.target.dataset.idx].institution = e.target.value;
-      renderPreview(); saveStateToStorage();
+      renderPreview(); calculateAtsScore(); saveStateToStorage();
     }));
     document.querySelectorAll('.edu-details').forEach(inp => inp.addEventListener('input', e => {
       state.cv.education[e.target.dataset.idx].details = e.target.value;
-      renderPreview(); saveStateToStorage();
+      renderPreview(); calculateAtsScore(); saveStateToStorage();
     }));
     document.querySelectorAll('.btn-delete-edu').forEach(btn => btn.addEventListener('click', e => {
-      const idx = e.currentTarget.dataset.idx;
-      state.cv.education.splice(idx, 1);
-      renderDynamicLists(); renderPreview(); saveStateToStorage();
+      state.cv.education.splice(e.currentTarget.dataset.idx, 1);
+      renderDynamicLists(); renderPreview(); calculateAtsScore(); saveStateToStorage();
     }));
 
-    // Project inputs
     document.querySelectorAll('.proj-title').forEach(inp => inp.addEventListener('input', e => {
       state.cv.projects[e.target.dataset.idx].title = e.target.value;
-      renderPreview(); saveStateToStorage();
+      renderPreview(); calculateAtsScore(); saveStateToStorage();
     }));
     document.querySelectorAll('.proj-link').forEach(inp => inp.addEventListener('input', e => {
       state.cv.projects[e.target.dataset.idx].link = e.target.value;
-      renderPreview(); saveStateToStorage();
+      renderPreview(); calculateAtsScore(); saveStateToStorage();
     }));
     document.querySelectorAll('.proj-tech').forEach(inp => inp.addEventListener('input', e => {
       state.cv.projects[e.target.dataset.idx].tech = e.target.value;
-      renderPreview(); saveStateToStorage();
+      renderPreview(); calculateAtsScore(); saveStateToStorage();
     }));
     document.querySelectorAll('.proj-desc').forEach(inp => inp.addEventListener('input', e => {
       state.cv.projects[e.target.dataset.idx].description = e.target.value;
-      renderPreview(); saveStateToStorage();
+      renderPreview(); calculateAtsScore(); saveStateToStorage();
     }));
     document.querySelectorAll('.btn-delete-proj').forEach(btn => btn.addEventListener('click', e => {
-      const idx = e.currentTarget.dataset.idx;
-      state.cv.projects.splice(idx, 1);
-      renderDynamicLists(); renderPreview(); saveStateToStorage();
+      state.cv.projects.splice(e.currentTarget.dataset.idx, 1);
+      renderDynamicLists(); renderPreview(); calculateAtsScore(); saveStateToStorage();
     }));
   }
 
-  // --- RENDER PRINTABLE RESUME PREVIEW ---
+  // --- RENDER PREVIEW ---
   function renderPreview() {
     const p = state.cv.personal || {};
     const isHe = state.lang === 'he';
 
-    // Apply template class and root properties
     el.resumePreview.className = `resume-paper template-${state.template}`;
     el.resumePreview.dir = isHe ? 'rtl' : 'ltr';
 
@@ -599,7 +795,6 @@
     document.documentElement.style.setProperty('--paper-spacing-mult', state.spacing);
     document.documentElement.style.setProperty('--accent-color', state.accentColor);
 
-    // Build Contact Items HTML
     const contactItemsHTML = [
       p.email ? `<span class="cv-contact-item"><i class="fa-solid fa-envelope"></i> ${escapeHtml(p.email)}</span>` : '',
       p.phone ? `<span class="cv-contact-item"><i class="fa-solid fa-phone"></i> ${escapeHtml(p.phone)}</span>` : '',
@@ -609,7 +804,6 @@
       p.website ? `<span class="cv-contact-item"><i class="fa-solid fa-globe"></i> ${escapeHtml(p.website)}</span>` : ''
     ].filter(Boolean).join('');
 
-    // Summary Section
     const summaryHTML = state.cv.summary ? `
       <section class="cv-section">
         <h3 class="cv-section-title"><i class="fa-solid fa-user-tie"></i> ${isHe ? 'תמצית מקצועית' : 'Professional Summary'}</h3>
@@ -617,7 +811,6 @@
       </section>
     ` : '';
 
-    // Experience Section
     const experiencesHTML = (state.cv.experiences || []).length > 0 ? `
       <section class="cv-section">
         <h3 class="cv-section-title"><i class="fa-solid fa-briefcase"></i> ${isHe ? 'ניסיון מקצועי' : 'Work Experience'}</h3>
@@ -636,7 +829,6 @@
       </section>
     ` : '';
 
-    // Education Section
     const educationHTML = (state.cv.education || []).length > 0 ? `
       <section class="cv-section">
         <h3 class="cv-section-title"><i class="fa-solid fa-graduation-cap"></i> ${isHe ? 'השכלה ולימודים' : 'Education'}</h3>
@@ -655,7 +847,6 @@
       </section>
     ` : '';
 
-    // Skills Section
     const skillsHTML = (state.cv.skills || []).length > 0 ? `
       <section class="cv-section">
         <h3 class="cv-section-title"><i class="fa-solid fa-screwdriver-wrench"></i> ${isHe ? 'כישורים וטכנולוגיות' : 'Technical Skills'}</h3>
@@ -668,7 +859,6 @@
       </section>
     ` : '';
 
-    // Projects Section
     const projectsHTML = (state.cv.projects || []).length > 0 ? `
       <section class="cv-section">
         <h3 class="cv-section-title"><i class="fa-solid fa-diagram-project"></i> ${isHe ? 'פרויקטים בולטים' : 'Key Projects'}</h3>
@@ -687,7 +877,6 @@
       </section>
     ` : '';
 
-    // Extras Section (Languages & Certifications)
     const extrasHTML = (state.cv.languages || state.cv.certifications) ? `
       <section class="cv-section">
         <h3 class="cv-section-title"><i class="fa-solid fa-certificate"></i> ${isHe ? 'שפות והסמכות' : 'Languages & Certifications'}</h3>
@@ -706,7 +895,6 @@
       </section>
     ` : '';
 
-    // Assemble Full Paper
     el.resumePreview.innerHTML = `
       <header class="cv-header">
         <h1 class="cv-name">${escapeHtml(p.fullName || (isHe ? 'שם מלא' : 'Full Name'))}</h1>
@@ -733,16 +921,39 @@
 
     renderFormFromState();
     renderPreview();
+    calculateAtsScore();
     applyZoom();
   }
 
-  // JSON Backup / Import
+  // Exports
   function exportJson() {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.cv, null, 2));
-    const dlAnchorElem = document.createElement('a');
-    dlAnchorElem.setAttribute("href", dataStr);
-    dlAnchorElem.setAttribute("download", `cv_${state.cv.personal.fullName || 'resume'}.json`);
-    dlAnchorElem.click();
+    const a = document.createElement('a');
+    a.href = dataStr;
+    a.download = `cv_${state.cv.personal.fullName || 'resume'}.json`;
+    a.click();
+  }
+
+  function exportTxt() {
+    const p = state.cv.personal || {};
+    let txt = `${p.fullName || ''}\n${p.jobTitle || ''}\nEmail: ${p.email || ''} | Phone: ${p.phone || ''} | ${p.location || ''}\n\n`;
+    if (state.cv.summary) txt += `=== SUMMARY ===\n${state.cv.summary}\n\n`;
+    if (state.cv.experiences) {
+      txt += `=== EXPERIENCE ===\n`;
+      state.cv.experiences.forEach(e => {
+        txt += `${e.jobTitle} - ${e.company} (${e.startDate} - ${e.endDate})\n${e.description}\n\n`;
+      });
+    }
+    if (state.cv.skills) {
+      txt += `=== SKILLS ===\n`;
+      state.cv.skills.forEach(s => txt += `${s.category}: ${s.items}\n`);
+    }
+
+    const dataStr = "data:text/plain;charset=utf-8," + encodeURIComponent(txt);
+    const a = document.createElement('a');
+    a.href = dataStr;
+    a.download = `cv_${p.fullName || 'resume'}.txt`;
+    a.click();
   }
 
   function importJson(e) {
@@ -751,10 +962,10 @@
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
-        const importedData = JSON.parse(event.target.result);
-        state.cv = importedData;
+        state.cv = JSON.parse(event.target.result);
         renderFormFromState();
         renderPreview();
+        calculateAtsScore();
         saveStateToStorage();
         alert(state.lang === 'he' ? 'הנתונים נטענו בהצלחה!' : 'CV Data Imported Successfully!');
       } catch (err) {
@@ -764,7 +975,6 @@
     reader.readAsText(file);
   }
 
-  // Helper
   function escapeHtml(str) {
     if (!str) return '';
     return String(str)
@@ -774,7 +984,6 @@
       .replace(/"/g, '&quot;');
   }
 
-  // Run init on DOM Ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {

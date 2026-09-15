@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CV Craft — בונה קורות חיים מתקדם</title>
+  <title>CV Craft PRO — מחולל קורות חיים מתקדם</title>
   <meta name="description" content="צור קורות חיים מקצועיים, מותאמים ל-ATS, בעברית ובאנגלית בצורה קלה, מהירה ובפרטיות מלאה.">
   
   <!-- Google Fonts: Inter, Heebo, Rubik, Outfit, Merriweather -->
@@ -23,16 +23,28 @@
       <div class="logo-icon"><i class="fa-solid fa-file-invoice"></i></div>
       <div class="logo-text">
         <h1>CV Craft <span class="badge">PRO</span></h1>
-        <p>מחולל קורות חיים דינמי ופרטי</p>
+        <p>מחולל קורות חיים דינמי וחכם</p>
       </div>
     </div>
     
     <div class="header-actions">
+      <!-- Live ATS Score Indicator -->
+      <div class="ats-score-badge" id="ats-score-container" title="ציון התאמה למערכות סינון ATS">
+        <i class="fa-solid fa-gauge-high"></i>
+        <span>ציון ATS: <strong id="ats-score-val">85%</strong></span>
+        <div class="ats-score-bar"><div id="ats-score-fill" style="width: 85%;"></div></div>
+      </div>
+
       <!-- Language Switcher -->
       <div class="lang-toggle-group" title="שפת קורות החיים">
         <button id="btn-lang-he" class="btn-toggle active" data-lang="he">עברית (RTL)</button>
         <button id="btn-lang-en" class="btn-toggle" data-lang="en">English (LTR)</button>
       </div>
+
+      <!-- Translate Content Action Button -->
+      <button id="btn-auto-translate" class="btn btn-secondary btn-translate" title="תרגם את תוכן הטקסט בלחיצת כפתור">
+        <i class="fa-solid fa-language"></i> <span id="lbl-translate">תרגם אוטומטית</span>
+      </button>
 
       <!-- Theme Switcher (Light / Dark) -->
       <button id="btn-theme-toggle" class="btn btn-secondary" title="החלף ערכת נושא (בהיר / כהה)">
@@ -41,15 +53,19 @@
 
       <!-- Action Buttons -->
       <button id="btn-sample-data" class="btn btn-secondary" title="טען נתוני לדוגמה">
-        <i class="fa-solid fa-wand-magic-sparkles"></i> <span>טען לדוגמה</span>
+        <i class="fa-solid fa-wand-magic-sparkles"></i> <span>דוגמה</span>
       </button>
       
       <button id="btn-export-json" class="btn btn-secondary" title="שמור קובץ גיבוי">
-        <i class="fa-solid fa-download"></i> <span>גיבוי JSON</span>
+        <i class="fa-solid fa-download"></i> <span>JSON</span>
+      </button>
+
+      <button id="btn-export-txt" class="btn btn-secondary" title="ייצוא כטקסט נקי / Markdown">
+        <i class="fa-solid fa-file-lines"></i> <span>TXT</span>
       </button>
 
       <label class="btn btn-secondary btn-file-input" title="טען קובץ גיבוי">
-        <i class="fa-solid fa-upload"></i> <span>טען JSON</span>
+        <i class="fa-solid fa-upload"></i> <span>טען</span>
         <input type="file" id="input-import-json" accept=".json" hidden>
       </label>
 
@@ -77,7 +93,7 @@
           <i class="fa-solid fa-palette"></i> <span>עיצוב וגופנים</span>
         </button>
         <button class="nav-tab" data-tab="tips">
-          <i class="fa-solid fa-lightbulb"></i> <span>טיפים ל-ATS</span>
+          <i class="fa-solid fa-chart-simple"></i> <span>ניתוח ATS</span>
         </button>
       </nav>
 
@@ -137,7 +153,12 @@
             </button>
             <div class="accordion-body">
               <div class="form-group">
-                <label>פסקה קצרה וממוקדת המדגישה את הניסיון והערך המרכזי שלך</label>
+                <div class="label-with-action">
+                  <label>פסקה קצרה וממוקדת המדגישה את הניסיון והערך המרכזי שלך</label>
+                  <button id="btn-ai-enhance-summary" class="btn-text-action" title="שדרג ניסוח בעזרת בינה מלאכותית">
+                    <i class="fa-solid fa-wand-magic"></i> שדרג ניסוח
+                  </button>
+                </div>
                 <textarea id="field-summary" rows="4" placeholder="מפתח תוכנה בכיר עם מעל 6 שנות ניסיון בפיתוח מערכות WEB מורכבות, ארכיטקטורת ענן והובלת צוותים..."></textarea>
               </div>
             </div>
@@ -333,22 +354,13 @@
 
       </div>
 
-      <!-- TAB 4: ATS Tips & Guide -->
+      <!-- TAB 4: ATS Tips & Live Score -->
       <div class="tab-content" id="tab-tips">
-        <h3>💡 טיפים לכתיבת קורות חיים מנצחים</h3>
-        <div class="tips-container">
-          <div class="tip-card">
-            <h4><i class="fa-solid fa-bullseye"></i> התאמה למערכות סינון (ATS)</h4>
-            <p>מערכות ATS מעדיפות טקסט נקי וברור. הימנע מטבלאות מורכבות או אלמנטים גרפיים כבדים. התבניות באפליקציה זו תוכננו מראש להיות סריקות לחלוטין.</p>
-          </div>
-          <div class="tip-card">
-            <h4><i class="fa-solid fa-chart-line"></i> השתמש במדדים כמותיים</h4>
-            <p>במקום לכתוב "שיפרתי את ביצועי המערכת", כתוב: <strong>"שיפרתי את זמן התגובה של ה-API ב-40% ע"י אופטימיזציית שאילתות SQL"</strong>.</p>
-          </div>
-          <div class="tip-card">
-            <h4><i class="fa-solid fa-bolt"></i> פעלים חזקים (Action Verbs)</h4>
-            <p>פתח כל שורה בתיאור תפקיד בפועל פעיל: <em>הובלתי, פיתחתי, הטמעתי, עיצבתי, אוטמטתי, יצרתי, הגדרתי</em>.</p>
-          </div>
+        <h3>📊 ניתוח התאמה למערכות סינון (ATS Score)</h3>
+        <p class="tab-subtitle">ניתוח בזמן אמת של איכות קורות החיים לפי קריטריונים של מגייסים</p>
+        
+        <div id="ats-suggestions-list" class="tips-container">
+          <!-- Populated live by app.js -->
         </div>
       </div>
 
@@ -364,7 +376,12 @@
           <button id="btn-zoom-in" class="btn-icon" title="הגדל תצוגה"><i class="fa-solid fa-plus"></i></button>
           <button id="btn-zoom-reset" class="btn-icon" title="איפוס גודל"><i class="fa-solid fa-rotate-left"></i></button>
         </div>
-        <div class="preview-status">
+
+        <div class="preview-status" id="translation-loader" style="display: none;">
+          <i class="fa-solid fa-spinner fa-spin"></i> <span>מתרגם תוכן...</span>
+        </div>
+
+        <div class="preview-status" id="save-status">
           <i class="fa-solid fa-circle-check"></i> <span>נשמר בדפדפן</span>
         </div>
       </div>
