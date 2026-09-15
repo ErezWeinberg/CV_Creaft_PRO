@@ -23,7 +23,7 @@
       <div class="logo-icon"><i class="fa-solid fa-file-invoice"></i></div>
       <div class="logo-text">
         <h1>CV Craft <span class="badge">PRO</span></h1>
-        <p>מחולל קורות חיים דינמי וחכם</p>
+        <p id="lbl-logo-sub">מחולל קורות חיים דינמי וחכם</p>
       </div>
     </div>
     
@@ -31,7 +31,7 @@
       <!-- Live ATS Score Indicator -->
       <div class="ats-score-badge" id="ats-score-container" title="ציון התאמה למערכות סינון ATS">
         <i class="fa-solid fa-gauge-high"></i>
-        <span>ציון ATS: <strong id="ats-score-val">85%</strong></span>
+        <span><span id="lbl-ats-prefix">ציון ATS:</span> <strong id="ats-score-val">85%</strong></span>
         <div class="ats-score-bar"><div id="ats-score-fill" style="width: 85%;"></div></div>
       </div>
 
@@ -53,24 +53,24 @@
 
       <!-- Action Buttons -->
       <button id="btn-sample-data" class="btn btn-secondary" title="טען נתוני לדוגמה">
-        <i class="fa-solid fa-wand-magic-sparkles"></i> <span>דוגמה</span>
+        <i class="fa-solid fa-wand-magic-sparkles"></i> <span id="lbl-btn-sample">דוגמה</span>
       </button>
       
       <button id="btn-export-json" class="btn btn-secondary" title="שמור קובץ גיבוי">
-        <i class="fa-solid fa-download"></i> <span>JSON</span>
+        <i class="fa-solid fa-download"></i> <span id="lbl-btn-json">JSON</span>
       </button>
 
       <button id="btn-export-txt" class="btn btn-secondary" title="ייצוא כטקסט נקי / Markdown">
-        <i class="fa-solid fa-file-lines"></i> <span>TXT</span>
+        <i class="fa-solid fa-file-lines"></i> <span id="lbl-btn-txt">TXT</span>
       </button>
 
       <label class="btn btn-secondary btn-file-input" title="טען קובץ גיבוי">
-        <i class="fa-solid fa-upload"></i> <span>טען</span>
+        <i class="fa-solid fa-upload"></i> <span id="lbl-btn-import">טען</span>
         <input type="file" id="input-import-json" accept=".json" hidden>
       </label>
 
       <button id="btn-print" class="btn btn-primary btn-glow" title="הדפס או שמור כ-PDF">
-        <i class="fa-solid fa-file-pdf"></i> <span>ייצוא ל-PDF</span>
+        <i class="fa-solid fa-file-pdf"></i> <span id="lbl-btn-print">ייצוא ל-PDF</span>
       </button>
     </div>
   </header>
@@ -84,16 +84,16 @@
       <!-- Nav Tabs for Editor -->
       <nav class="editor-nav">
         <button class="nav-tab active" data-tab="content">
-          <i class="fa-solid fa-pen-to-square"></i> <span>תוכן</span>
+          <i class="fa-solid fa-pen-to-square"></i> <span id="lbl-tab-content">תוכן</span>
         </button>
         <button class="nav-tab" data-tab="templates">
-          <i class="fa-solid fa-table-cells-large"></i> <span>תבניות</span>
+          <i class="fa-solid fa-table-cells-large"></i> <span id="lbl-tab-templates">תבניות</span>
         </button>
         <button class="nav-tab" data-tab="design">
-          <i class="fa-solid fa-palette"></i> <span>עיצוב וגופנים</span>
+          <i class="fa-solid fa-palette"></i> <span id="lbl-tab-design">עיצוב וגופנים</span>
         </button>
         <button class="nav-tab" data-tab="tips">
-          <i class="fa-solid fa-chart-simple"></i> <span>ניתוח ATS</span>
+          <i class="fa-solid fa-chart-simple"></i> <span id="lbl-tab-tips">ניתוח ATS</span>
         </button>
       </nav>
 
@@ -104,41 +104,41 @@
           <!-- Personal Info -->
           <div class="accordion-item expanded" id="acc-personal">
             <button class="accordion-header">
-              <span><i class="fa-solid fa-user"></i> פרטים אישיים</span>
+              <span><i class="fa-solid fa-user"></i> <span id="lbl-acc-personal">פרטים אישיים</span></span>
               <i class="fa-solid fa-chevron-down chevron"></i>
             </button>
             <div class="accordion-body">
               <div class="form-grid">
                 <div class="form-group span-2">
-                  <label>שם מלא *</label>
+                  <label id="lbl-fullName">שם מלא *</label>
                   <input type="text" id="field-fullName" placeholder="ישראל ישראלי">
                 </div>
                 <div class="form-group span-2">
-                  <label>תואר מקצועי / הגדרת תפקיד *</label>
+                  <label id="lbl-jobTitle">תואר מקצועי / הגדרת תפקיד *</label>
                   <input type="text" id="field-jobTitle" placeholder="Senior Full-Stack Developer">
                 </div>
                 <div class="form-group">
-                  <label>אימייל</label>
+                  <label id="lbl-email">אימייל</label>
                   <input type="email" id="field-email" placeholder="israel@example.com">
                 </div>
                 <div class="form-group">
-                  <label>טלפון</label>
+                  <label id="lbl-phone">טלפון</label>
                   <input type="tel" id="field-phone" placeholder="050-1234567">
                 </div>
                 <div class="form-group">
-                  <label>עיר / מיקום</label>
+                  <label id="lbl-location">עיר / מיקום</label>
                   <input type="text" id="field-location" placeholder="תל אביב, ישראל">
                 </div>
                 <div class="form-group">
-                  <label>קישור LinkedIn</label>
+                  <label id="lbl-linkedin">קישור LinkedIn</label>
                   <input type="url" id="field-linkedin" placeholder="linkedin.com/in/username">
                 </div>
                 <div class="form-group">
-                  <label>קישור GitHub / קורות חיים</label>
+                  <label id="lbl-github">קישור GitHub / קורות חיים</label>
                   <input type="url" id="field-github" placeholder="github.com/username">
                 </div>
                 <div class="form-group">
-                  <label>אתר אישי / פורטפוליו</label>
+                  <label id="lbl-website">אתר אישי / פורטפוליו</label>
                   <input type="url" id="field-website" placeholder="mywebsite.com">
                 </div>
               </div>
@@ -148,15 +148,15 @@
           <!-- Professional Summary -->
           <div class="accordion-item" id="acc-summary">
             <button class="accordion-header">
-              <span><i class="fa-solid fa-align-left"></i> תמצית מקצועית (About)</span>
+              <span><i class="fa-solid fa-align-left"></i> <span id="lbl-acc-summary">תמצית מקצועית (About)</span></span>
               <i class="fa-solid fa-chevron-down chevron"></i>
             </button>
             <div class="accordion-body">
               <div class="form-group">
                 <div class="label-with-action">
-                  <label>פסקה קצרה וממוקדת המדגישה את הניסיון והערך המרכזי שלך</label>
+                  <label id="lbl-summary-desc">פסקה קצרה וממוקדת המדגישה את הניסיון והערך המרכזי שלך</label>
                   <button id="btn-ai-enhance-summary" class="btn-text-action" title="שדרג ניסוח בעזרת בינה מלאכותית">
-                    <i class="fa-solid fa-wand-magic"></i> שדרג ניסוח
+                    <i class="fa-solid fa-wand-magic"></i> <span id="lbl-ai-enhance">שדרג ניסוח</span>
                   </button>
                 </div>
                 <textarea id="field-summary" rows="4" placeholder="מפתח תוכנה בכיר עם מעל 6 שנות ניסיון בפיתוח מערכות WEB מורכבות, ארכיטקטורת ענן והובלת צוותים..."></textarea>
@@ -167,13 +167,13 @@
           <!-- Work Experience -->
           <div class="accordion-item" id="acc-experience">
             <button class="accordion-header">
-              <span><i class="fa-solid fa-briefcase"></i> ניסיון תעסוקתי</span>
+              <span><i class="fa-solid fa-briefcase"></i> <span id="lbl-acc-experience">ניסיון תעסוקתי</span></span>
               <i class="fa-solid fa-chevron-down chevron"></i>
             </button>
             <div class="accordion-body">
               <div id="experience-list" class="dynamic-list"></div>
               <button id="btn-add-experience" class="btn btn-add">
-                <i class="fa-solid fa-plus"></i> הוסף תפקיד
+                <i class="fa-solid fa-plus"></i> <span id="lbl-add-experience">הוסף תפקיד</span>
               </button>
             </div>
           </div>
@@ -181,13 +181,13 @@
           <!-- Education -->
           <div class="accordion-item" id="acc-education">
             <button class="accordion-header">
-              <span><i class="fa-solid fa-graduation-cap"></i> השכלה ולימודים</span>
+              <span><i class="fa-solid fa-graduation-cap"></i> <span id="lbl-acc-education">השכלה ולימודים</span></span>
               <i class="fa-solid fa-chevron-down chevron"></i>
             </button>
             <div class="accordion-body">
               <div id="education-list" class="dynamic-list"></div>
               <button id="btn-add-education" class="btn btn-add">
-                <i class="fa-solid fa-plus"></i> הוסף השכלה
+                <i class="fa-solid fa-plus"></i> <span id="lbl-add-education">הוסף השכלה</span>
               </button>
             </div>
           </div>
@@ -195,13 +195,13 @@
           <!-- Skills -->
           <div class="accordion-item" id="acc-skills">
             <button class="accordion-header">
-              <span><i class="fa-solid fa-screwdriver-wrench"></i> כישורים וטכנולוגיות</span>
+              <span><i class="fa-solid fa-screwdriver-wrench"></i> <span id="lbl-acc-skills">כישורים וטכנולוגיות</span></span>
               <i class="fa-solid fa-chevron-down chevron"></i>
             </button>
             <div class="accordion-body">
               <div id="skills-list" class="dynamic-list"></div>
               <button id="btn-add-skill-cat" class="btn btn-add">
-                <i class="fa-solid fa-plus"></i> הוסף קטגוריית כישורים
+                <i class="fa-solid fa-plus"></i> <span id="lbl-add-skill-cat">הוסף קטגוריית כישורים</span>
               </button>
             </div>
           </div>
@@ -209,13 +209,13 @@
           <!-- Projects -->
           <div class="accordion-item" id="acc-projects">
             <button class="accordion-header">
-              <span><i class="fa-solid fa-diagram-project"></i> פרויקטים בולטים</span>
+              <span><i class="fa-solid fa-diagram-project"></i> <span id="lbl-acc-projects">פרויקטים בולטים</span></span>
               <i class="fa-solid fa-chevron-down chevron"></i>
             </button>
             <div class="accordion-body">
               <div id="projects-list" class="dynamic-list"></div>
               <button id="btn-add-project" class="btn btn-add">
-                <i class="fa-solid fa-plus"></i> הוסף פרויקט
+                <i class="fa-solid fa-plus"></i> <span id="lbl-add-project">הוסף פרויקט</span>
               </button>
             </div>
           </div>
@@ -223,16 +223,16 @@
           <!-- Languages & Certifications -->
           <div class="accordion-item" id="acc-extras">
             <button class="accordion-header">
-              <span><i class="fa-solid fa-certificate"></i> שפות והסמכות</span>
+              <span><i class="fa-solid fa-certificate"></i> <span id="lbl-acc-extras">שפות והסמכות</span></span>
               <i class="fa-solid fa-chevron-down chevron"></i>
             </button>
             <div class="accordion-body">
               <div class="form-group">
-                <label>שפות (מופרדות בפסיקים)</label>
+                <label id="lbl-languages">שפות (מופרדות בפסיקים)</label>
                 <input type="text" id="field-languages" placeholder="עברית (שפת אם), אנגלית (ברמה גבוהה מאוד)">
               </div>
               <div class="form-group">
-                <label>הסמכות ותעודות (מופרדות בפסיקים או בשורות חדשות)</label>
+                <label id="lbl-certifications">הסמכות ותעודות (מופרדות בפסיקים או בשורות חדשות)</label>
                 <textarea id="field-certifications" rows="3" placeholder="AWS Certified Solutions Architect&#10;Google Cloud Professional Developer"></textarea>
               </div>
             </div>
@@ -243,8 +243,8 @@
 
       <!-- TAB 2: Templates Picker -->
       <div class="tab-content" id="tab-templates">
-        <h3>בחר תבנית עיצוב לקורות החיים</h3>
-        <p class="tab-subtitle">כל התבניות מותאמות לסריקת ATS ומיועדות להדפסה נקייה</p>
+        <h3 id="lbl-heading-templates">בחר תבנית עיצוב לקורות החיים</h3>
+        <p class="tab-subtitle" id="lbl-sub-templates">כל התבניות מותאמות לסריקת ATS ומיועדות להדפסה נקייה</p>
 
         <div class="template-grid">
           
@@ -261,8 +261,8 @@
               </div>
             </div>
             <div class="template-info">
-              <h4>Modern Tech (מומלץ)</h4>
-              <p>עיצוב מודרני דו-עמודתי עם קו הדגשה צבעוני, קריא ומרשים.</p>
+              <h4 id="lbl-tpl-modern-title">Modern Tech (מומלץ)</h4>
+              <p id="lbl-tpl-modern-desc">עיצוב מודרני דו-עמודתי עם קו הדגשה צבעוני, קריא ומרשים.</p>
             </div>
           </div>
 
@@ -276,8 +276,8 @@
               </div>
             </div>
             <div class="template-info">
-              <h4>ATS Classic</h4>
-              <p>תבנית קלאסית בטור יחיד. 100% מותאמת לסורקי מערכות גיוס אוטומטיות.</p>
+              <h4 id="lbl-tpl-ats-title">ATS Classic</h4>
+              <p id="lbl-tpl-ats-desc">תבנית קלאסית בטור יחיד. 100% מותאמת לסורקי מערכות גיוס אוטומטיות.</p>
             </div>
           </div>
 
@@ -290,8 +290,8 @@
               </div>
             </div>
             <div class="template-info">
-              <h4>Minimalist Executive</h4>
-              <p>טיפוגרפיה נקיה ויוקרתית עם מרווחים נדיבים, מתאימה לתפקידי ניהול.</p>
+              <h4 id="lbl-tpl-minimal-title">Minimalist Executive</h4>
+              <p id="lbl-tpl-minimal-desc">טיפוגרפיה נקיה ויוקרתית עם מרווחים נדיבים, מתאימה לתפקידי ניהול.</p>
             </div>
           </div>
 
@@ -304,8 +304,8 @@
               </div>
             </div>
             <div class="template-info">
-              <h4>Creative Accent</h4>
-              <p>עיצוב עם כותרת בולטת ותגיות צבעוניות לכישורים.</p>
+              <h4 id="lbl-tpl-creative-title">Creative Accent</h4>
+              <p id="lbl-tpl-creative-desc">עיצוב עם כותרת בולטת ותגיות צבעוניות לכישורים.</p>
             </div>
           </div>
 
@@ -314,11 +314,11 @@
 
       <!-- TAB 3: Design Controls -->
       <div class="tab-content" id="tab-design">
-        <h3>התאמה עיצובית</h3>
+        <h3 id="lbl-heading-design">התאמה עיצובית</h3>
         
         <!-- Color Palette -->
         <div class="control-group">
-          <label>צבע הדגש (Accent Color)</label>
+          <label id="lbl-accent-color">צבע הדגש (Accent Color)</label>
           <div class="color-palette">
             <button class="color-swatch active" style="background: #2563eb;" data-color="#2563eb" title="כחול רויאל"></button>
             <button class="color-swatch" style="background: #0d9488;" data-color="#0d9488" title="טורקיז עמוק"></button>
@@ -332,7 +332,7 @@
 
         <!-- Font Family -->
         <div class="control-group">
-          <label>גופן (Font Family)</label>
+          <label id="lbl-font-family">גופן (Font Family)</label>
           <select id="select-font-family" class="form-select">
             <option value="'Heebo', 'Inter', sans-serif">Heebo / Inter (מודרני וקריא)</option>
             <option value="'Rubik', 'Outfit', sans-serif">Rubik / Outfit (עגלגל ומעוצב)</option>
@@ -343,12 +343,12 @@
 
         <!-- Font Size & Spacing -->
         <div class="control-group">
-          <label>גודל גופן בבסיס המסמך: <span id="val-font-size">14px</span></label>
+          <label><span id="lbl-font-size-title">גודל גופן בבסיס המסמך:</span> <span id="val-font-size">14px</span></label>
           <input type="range" id="slider-font-size" min="12" max="16" step="0.5" value="14">
         </div>
 
         <div class="control-group">
-          <label>צפיפות המרווחים: <span id="val-spacing">רגיל</span></label>
+          <label><span id="lbl-spacing-title">צפיפות המרווחים:</span> <span id="val-spacing">רגיל</span></label>
           <input type="range" id="slider-spacing" min="0.8" max="1.3" step="0.1" value="1">
         </div>
 
@@ -356,8 +356,8 @@
 
       <!-- TAB 4: ATS Tips & Live Score -->
       <div class="tab-content" id="tab-tips">
-        <h3>📊 ניתוח התאמה למערכות סינון (ATS Score)</h3>
-        <p class="tab-subtitle">ניתוח בזמן אמת של איכות קורות החיים לפי קריטריונים של מגייסים</p>
+        <h3 id="lbl-heading-tips">📊 ניתוח התאמה למערכות סינון (ATS Score)</h3>
+        <p class="tab-subtitle" id="lbl-sub-tips">ניתוח בזמן אמת של איכות קורות החיים לפי קריטריונים של מגייסים</p>
         
         <div id="ats-suggestions-list" class="tips-container">
           <!-- Populated live by app.js -->
@@ -378,11 +378,11 @@
         </div>
 
         <div class="preview-status" id="translation-loader" style="display: none;">
-          <i class="fa-solid fa-spinner fa-spin"></i> <span>מתרגם תוכן...</span>
+          <i class="fa-solid fa-spinner fa-spin"></i> <span id="lbl-translation-loader">מתרגם תוכן...</span>
         </div>
 
         <div class="preview-status" id="save-status">
-          <i class="fa-solid fa-circle-check"></i> <span>נשמר בדפדפן</span>
+          <i class="fa-solid fa-circle-check"></i> <span id="lbl-save-status">נשמר בדפדפן</span>
         </div>
       </div>
 

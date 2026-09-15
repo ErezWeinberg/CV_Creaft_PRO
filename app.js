@@ -5,6 +5,144 @@
 (function () {
   'use strict';
 
+  // --- UI DICTIONARY (i18n) ---
+  const i18n = {
+    he: {
+      logoSub: 'מחולל קורות חיים דינמי וחכם',
+      atsPrefix: 'ציון ATS:',
+      translateBtn: 'תרגם אוטומטית',
+      sampleBtn: 'דוגמה',
+      exportJsonBtn: 'JSON',
+      exportTxtBtn: 'TXT',
+      importBtn: 'טען',
+      exportPdfBtn: 'ייצוא ל-PDF',
+      tabContent: 'תוכן',
+      tabTemplates: 'תבניות',
+      tabDesign: 'עיצוב וגופנים',
+      tabTips: 'ניתוח ATS',
+      accPersonal: 'פרטים אישיים',
+      accSummary: 'תמצית מקצועית (About)',
+      accExperience: 'ניסיון תעסוקתי',
+      accEducation: 'השכלה ולימודים',
+      accSkills: 'כישורים וטכנולוגיות',
+      accProjects: 'פרויקטים בולטים',
+      accExtras: 'שפות והסמכות',
+      lblFullName: 'שם מלא *',
+      phFullName: 'ישראל ישראלי',
+      lblJobTitle: 'תואר מקצועי / הגדרת תפקיד *',
+      phJobTitle: 'Senior Full-Stack Developer',
+      lblEmail: 'אימייל',
+      phEmail: 'israel@example.com',
+      lblPhone: 'טלפון',
+      phPhone: '050-1234567',
+      lblLocation: 'עיר / מיקום',
+      phLocation: 'תל אביב, ישראל',
+      lblLinkedin: 'קישור LinkedIn',
+      phLinkedin: 'linkedin.com/in/username',
+      lblGithub: 'קישור GitHub / קורות חיים',
+      phGithub: 'github.com/username',
+      lblWebsite: 'אתר אישי / פורטפוליו',
+      phWebsite: 'mywebsite.com',
+      lblSummaryDesc: 'פסקה קצרה וממוקדת המדגישה את הניסיון והערך המרכזי שלך',
+      lblAiEnhance: 'שדרג ניסוח',
+      phSummary: 'מפתח תוכנה בכיר עם מעל 6 שנות ניסיון בפיתוח מערכות WEB מורכבות, ארכיטקטורת ענן והובלת צוותים...',
+      lblAddExperience: 'הוסף תפקיד',
+      lblAddEducation: 'הוסף השכלה',
+      lblAddSkillCat: 'הוסף קטגוריית כישורים',
+      lblAddProject: 'הוסף פרויקט',
+      lblLanguages: 'שפות (מופרדות בפסיקים)',
+      phLanguages: 'עברית (שפת אם), אנגלית (ברמה גבוהה מאוד)',
+      lblCertifications: 'הסמכות ותעודות (מופרדות בפסיקים או בשורות חדשות)',
+      phCertifications: 'AWS Certified Solutions Architect\nGoogle Cloud Professional Developer',
+      headingTemplates: 'בחר תבנית עיצוב לקורות החיים',
+      subTemplates: 'כל התבניות מותאמות לסריקת ATS ומיועדות להדפסה נקייה',
+      tplModernTitle: 'Modern Tech (מומלץ)',
+      tplModernDesc: 'עיצוב מודרני דו-עמודתי עם קו הדגשה צבעוני, קריא ומרשים.',
+      tplAtsTitle: 'ATS Classic',
+      tplAtsDesc: 'תבנית קלאסית בטור יחיד. 100% מותאמת לסורקי מערכות גיוס אוטומטיות.',
+      tplMinimalTitle: 'Minimalist Executive',
+      tplMinimalDesc: 'טיפוגרפיה נקיה ויוקרתית עם מרווחים נדיבים, מתאימה לתפקידי ניהול.',
+      tplCreativeTitle: 'Creative Accent',
+      tplCreativeDesc: 'עיצוב עם כותרת בולטת ותגיות צבעוניות לכישורים.',
+      headingDesign: 'התאמה עיצובית',
+      lblAccentColor: 'צבע הדגש (Accent Color)',
+      lblFontFamily: 'גופן (Font Family)',
+      lblFontSizeTitle: 'גודל גופן בבסיס המסמך:',
+      lblSpacingTitle: 'צפיפות המרווחים:',
+      headingTips: '📊 ניתוח התאמה למערכות סינון (ATS Score)',
+      subTips: 'ניתוח בזמן אמת של איכות קורות החיים לפי קריטריונים של מגייסים',
+      translationLoader: 'מתרגם תוכן...',
+      saveStatus: 'נשמר בדפדפן'
+    },
+    en: {
+      logoSub: 'Dynamic & Smart Resume Builder',
+      atsPrefix: 'ATS Score:',
+      translateBtn: 'Auto Translate',
+      sampleBtn: 'Sample',
+      exportJsonBtn: 'JSON',
+      exportTxtBtn: 'TXT',
+      importBtn: 'Import',
+      exportPdfBtn: 'Export PDF',
+      tabContent: 'Content',
+      tabTemplates: 'Templates',
+      tabDesign: 'Design & Fonts',
+      tabTips: 'ATS Analysis',
+      accPersonal: 'Personal Details',
+      accSummary: 'Professional Summary',
+      accExperience: 'Work Experience',
+      accEducation: 'Education',
+      accSkills: 'Technical Skills',
+      accProjects: 'Featured Projects',
+      accExtras: 'Languages & Certifications',
+      lblFullName: 'Full Name *',
+      phFullName: 'Alex Morgan',
+      lblJobTitle: 'Professional Title / Role *',
+      phJobTitle: 'Senior Full-Stack Engineer',
+      lblEmail: 'Email',
+      phEmail: 'alex@example.com',
+      lblPhone: 'Phone',
+      phPhone: '+1 (555) 019-2834',
+      lblLocation: 'City / Location',
+      phLocation: 'San Francisco, CA',
+      lblLinkedin: 'LinkedIn Link',
+      phLinkedin: 'linkedin.com/in/username',
+      lblGithub: 'GitHub / Portfolio Link',
+      phGithub: 'github.com/username',
+      lblWebsite: 'Personal Website',
+      phWebsite: 'mywebsite.com',
+      lblSummaryDesc: 'Concise summary highlighting your key experience and core value',
+      lblAiEnhance: 'Enhance with AI',
+      phSummary: 'Results-oriented Senior Developer with 6+ years of experience in cloud architecture, web systems, and technical team leadership...',
+      lblAddExperience: 'Add Position',
+      lblAddEducation: 'Add Education',
+      lblAddSkillCat: 'Add Skill Category',
+      lblAddProject: 'Add Project',
+      lblLanguages: 'Languages (comma separated)',
+      phLanguages: 'English (Native), Hebrew (Fluent)',
+      lblCertifications: 'Certifications & Credentials (comma or line separated)',
+      phCertifications: 'AWS Certified Solutions Architect\nGoogle Cloud Professional Developer',
+      headingTemplates: 'Choose Resume Template',
+      subTemplates: 'All templates are ATS-optimized and print-ready',
+      tplModernTitle: 'Modern Tech (Recommended)',
+      tplModernDesc: 'Modern two-column design with colorful accent line, clear and impressive.',
+      tplAtsTitle: 'ATS Classic',
+      tplAtsDesc: 'Classic single-column template. 100% optimized for automated ATS parsers.',
+      tplMinimalTitle: 'Minimalist Executive',
+      tplMinimalDesc: 'Clean executive typography with generous margins, ideal for management.',
+      tplCreativeTitle: 'Creative Accent',
+      tplCreativeDesc: 'Distinctive layout with prominent headers and colored skill tags.',
+      headingDesign: 'Design Customization',
+      lblAccentColor: 'Accent Color',
+      lblFontFamily: 'Font Family',
+      lblFontSizeTitle: 'Base Font Size:',
+      lblSpacingTitle: 'Spacing Density:',
+      headingTips: '📊 ATS Match Analysis',
+      subTips: 'Real-time analysis of resume quality based on recruiter criteria',
+      translationLoader: 'Translating content...',
+      saveStatus: 'Saved in browser'
+    }
+  };
+
   // --- STATE ---
   let state = {
     lang: 'he', // 'he' | 'en'
@@ -23,6 +161,9 @@
 
   // DOM Cache
   const el = {};
+
+  // Cache for translation results
+  const translationCache = new Map();
 
   // Initialize
   function init() {
@@ -125,9 +266,9 @@
 
   // --- EVENT BINDINGS ---
   function bindEvents() {
-    el.btnLangHe.addEventListener('click', () => setLanguage('he'));
-    el.btnLangEn.addEventListener('click', () => setLanguage('en'));
-    el.btnAutoTranslate.addEventListener('click', autoTranslateAllContent);
+    el.btnLangHe.addEventListener('click', () => setLanguage('he', true));
+    el.btnLangEn.addEventListener('click', () => setLanguage('en', true));
+    el.btnAutoTranslate.addEventListener('click', () => setLanguage(state.lang === 'he' ? 'en' : 'he', true));
 
     if (el.btnThemeToggle) {
       el.btnThemeToggle.addEventListener('click', toggleTheme);
@@ -219,7 +360,8 @@
 
     el.sliderSpacing.addEventListener('input', (e) => {
       state.spacing = parseFloat(e.target.value);
-      el.valSpacing.textContent = state.spacing < 1 ? 'דחוס' : state.spacing === 1 ? 'רגיל' : 'מרווח';
+      const isHe = state.lang === 'he';
+      el.valSpacing.textContent = state.spacing < 1 ? (isHe ? 'דחוס' : 'Compact') : state.spacing === 1 ? (isHe ? 'רגיל' : 'Normal') : (isHe ? 'מרווח' : 'Spacious');
       renderPreview();
       saveStateToStorage();
     });
@@ -246,92 +388,207 @@
     });
   }
 
+  // --- UI INTERNATIONALIZATION (i18n) ---
+  function updateUILanguage(lang) {
+    const t = i18n[lang] || i18n.he;
+
+    const setTxt = (id, text) => {
+      const elem = document.getElementById(id);
+      if (elem) elem.textContent = text;
+    };
+    const setPh = (id, placeholder) => {
+      const elem = document.getElementById(id);
+      if (elem) elem.placeholder = placeholder;
+    };
+
+    setTxt('lbl-logo-sub', t.logoSub);
+    setTxt('lbl-ats-prefix', t.atsPrefix);
+    setTxt('lbl-translate', t.translateBtn);
+    setTxt('lbl-btn-sample', t.sampleBtn);
+    setTxt('lbl-btn-json', t.exportJsonBtn);
+    setTxt('lbl-btn-txt', t.exportTxtBtn);
+    setTxt('lbl-btn-import', t.importBtn);
+    setTxt('lbl-btn-print', t.exportPdfBtn);
+
+    setTxt('lbl-tab-content', t.tabContent);
+    setTxt('lbl-tab-templates', t.tabTemplates);
+    setTxt('lbl-tab-design', t.tabDesign);
+    setTxt('lbl-tab-tips', t.tabTips);
+
+    setTxt('lbl-acc-personal', t.accPersonal);
+    setTxt('lbl-acc-summary', t.accSummary);
+    setTxt('lbl-acc-experience', t.accExperience);
+    setTxt('lbl-acc-education', t.accEducation);
+    setTxt('lbl-acc-skills', t.accSkills);
+    setTxt('lbl-acc-projects', t.accProjects);
+    setTxt('lbl-acc-extras', t.accExtras);
+
+    setTxt('lbl-fullName', t.lblFullName);
+    setPh('field-fullName', t.phFullName);
+    setTxt('lbl-jobTitle', t.lblJobTitle);
+    setPh('field-jobTitle', t.phJobTitle);
+    setTxt('lbl-email', t.lblEmail);
+    setPh('field-email', t.phEmail);
+    setTxt('lbl-phone', t.lblPhone);
+    setPh('field-phone', t.phPhone);
+    setTxt('lbl-location', t.lblLocation);
+    setPh('field-location', t.phLocation);
+    setTxt('lbl-linkedin', t.lblLinkedin);
+    setPh('field-linkedin', t.phLinkedin);
+    setTxt('lbl-github', t.lblGithub);
+    setPh('field-github', t.phGithub);
+    setTxt('lbl-website', t.lblWebsite);
+    setPh('field-website', t.phWebsite);
+
+    setTxt('lbl-summary-desc', t.lblSummaryDesc);
+    setTxt('lbl-ai-enhance', t.lblAiEnhance);
+    setPh('field-summary', t.phSummary);
+
+    setTxt('lbl-add-experience', t.lblAddExperience);
+    setTxt('lbl-add-education', t.lblAddEducation);
+    setTxt('lbl-add-skill-cat', t.lblAddSkillCat);
+    setTxt('lbl-add-project', t.lblAddProject);
+
+    setTxt('lbl-languages', t.lblLanguages);
+    setPh('field-languages', t.phLanguages);
+    setTxt('lbl-certifications', t.lblCertifications);
+    setPh('field-certifications', t.phCertifications);
+
+    setTxt('lbl-heading-templates', t.headingTemplates);
+    setTxt('lbl-sub-templates', t.subTemplates);
+    setTxt('lbl-tpl-modern-title', t.tplModernTitle);
+    setTxt('lbl-tpl-modern-desc', t.tplModernDesc);
+    setTxt('lbl-tpl-ats-title', t.tplAtsTitle);
+    setTxt('lbl-tpl-ats-desc', t.tplAtsDesc);
+    setTxt('lbl-tpl-minimal-title', t.tplMinimalTitle);
+    setTxt('lbl-tpl-minimal-desc', t.tplMinimalDesc);
+    setTxt('lbl-tpl-creative-title', t.tplCreativeTitle);
+    setTxt('lbl-tpl-creative-desc', t.tplCreativeDesc);
+
+    setTxt('lbl-heading-design', t.headingDesign);
+    setTxt('lbl-accent-color', t.lblAccentColor);
+    setTxt('lbl-font-family', t.lblFontFamily);
+    setTxt('lbl-font-size-title', t.lblFontSizeTitle);
+    setTxt('lbl-spacing-title', t.lblSpacingTitle);
+
+    setTxt('lbl-heading-tips', t.headingTips);
+    setTxt('lbl-sub-tips', t.subTips);
+
+    setTxt('lbl-translation-loader', t.translationLoader);
+    setTxt('lbl-save-status', t.saveStatus);
+  }
+
   // --- REAL-TIME TRANSLATION ENGINE ---
   async function translateTextOnline(text, fromLang, toLang) {
     if (!text || text.trim() === '') return text;
+    const cacheKey = `${fromLang}_${toLang}_${text.trim()}`;
+    if (translationCache.has(cacheKey)) {
+      return translationCache.get(cacheKey);
+    }
+
     try {
       const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${fromLang}|${toLang}`;
       const res = await fetch(url);
       const data = await res.json();
       if (data && data.responseData && data.responseData.translatedText) {
-        return data.responseData.translatedText;
+        const result = data.responseData.translatedText;
+        translationCache.set(cacheKey, result);
+        return result;
       }
     } catch (e) {
-      console.warn('Online translation error, falling back to local:', e);
+      console.warn('Online translation error, falling back to original text:', e);
     }
     return text;
   }
 
-  async function autoTranslateAllContent() {
-    const targetLang = state.lang === 'he' ? 'en' : 'he';
-    const sourceLang = state.lang;
-    
+  function isUsingSampleData(cv, sourceLang) {
+    if (!cv || !cv.personal) return true;
+    const name = (cv.personal.fullName || '').trim();
+    if (sourceLang === 'he') {
+      return !name || name === 'ישראל ישראלי' || name === sampleDataHebrew.personal.fullName;
+    } else {
+      return !name || name === 'Alex Morgan' || name === sampleDataEnglish.personal.fullName;
+    }
+  }
+
+  async function translateCVContent(targetLang, sourceLang) {
+    if (targetLang === sourceLang) return;
+
+    if (isUsingSampleData(state.cv, sourceLang)) {
+      state.cv = JSON.parse(JSON.stringify(targetLang === 'en' ? sampleDataEnglish : sampleDataHebrew));
+      return;
+    }
+
     if (el.translationLoader) el.translationLoader.style.display = 'flex';
-    el.btnAutoTranslate.disabled = true;
+    if (el.btnAutoTranslate) el.btnAutoTranslate.disabled = true;
 
     try {
+      const tasks = [];
+
       // Personal Title & Location
-      if (state.cv.personal.jobTitle) {
-        state.cv.personal.jobTitle = await translateTextOnline(state.cv.personal.jobTitle, sourceLang, targetLang);
-      }
-      if (state.cv.personal.location) {
-        state.cv.personal.location = await translateTextOnline(state.cv.personal.location, sourceLang, targetLang);
+      if (state.cv.personal) {
+        if (state.cv.personal.jobTitle) {
+          tasks.push(translateTextOnline(state.cv.personal.jobTitle, sourceLang, targetLang).then(res => state.cv.personal.jobTitle = res));
+        }
+        if (state.cv.personal.location) {
+          tasks.push(translateTextOnline(state.cv.personal.location, sourceLang, targetLang).then(res => state.cv.personal.location = res));
+        }
       }
 
       // Summary
       if (state.cv.summary) {
-        state.cv.summary = await translateTextOnline(state.cv.summary, sourceLang, targetLang);
+        tasks.push(translateTextOnline(state.cv.summary, sourceLang, targetLang).then(res => state.cv.summary = res));
       }
 
       // Experiences
       if (state.cv.experiences) {
         for (let exp of state.cv.experiences) {
-          if (exp.jobTitle) exp.jobTitle = await translateTextOnline(exp.jobTitle, sourceLang, targetLang);
-          if (exp.company) exp.company = await translateTextOnline(exp.company, sourceLang, targetLang);
-          if (exp.description) exp.description = await translateTextOnline(exp.description, sourceLang, targetLang);
+          if (exp.jobTitle) tasks.push(translateTextOnline(exp.jobTitle, sourceLang, targetLang).then(res => exp.jobTitle = res));
+          if (exp.company) tasks.push(translateTextOnline(exp.company, sourceLang, targetLang).then(res => exp.company = res));
+          if (exp.location) tasks.push(translateTextOnline(exp.location, sourceLang, targetLang).then(res => exp.location = res));
+          if (exp.endDate) {
+            if (exp.endDate === 'היום' && targetLang === 'en') exp.endDate = 'Present';
+            else if (exp.endDate === 'Present' && targetLang === 'he') exp.endDate = 'היום';
+          }
+          if (exp.description) tasks.push(translateTextOnline(exp.description, sourceLang, targetLang).then(res => exp.description = res));
         }
       }
 
       // Education
       if (state.cv.education) {
         for (let edu of state.cv.education) {
-          if (edu.degree) edu.degree = await translateTextOnline(edu.degree, sourceLang, targetLang);
-          if (edu.institution) edu.institution = await translateTextOnline(edu.institution, sourceLang, targetLang);
-          if (edu.details) edu.details = await translateTextOnline(edu.details, sourceLang, targetLang);
+          if (edu.degree) tasks.push(translateTextOnline(edu.degree, sourceLang, targetLang).then(res => edu.degree = res));
+          if (edu.institution) tasks.push(translateTextOnline(edu.institution, sourceLang, targetLang).then(res => edu.institution = res));
+          if (edu.details) tasks.push(translateTextOnline(edu.details, sourceLang, targetLang).then(res => edu.details = res));
         }
       }
 
       // Skills
       if (state.cv.skills) {
         for (let sk of state.cv.skills) {
-          if (sk.category) sk.category = await translateTextOnline(sk.category, sourceLang, targetLang);
+          if (sk.category) tasks.push(translateTextOnline(sk.category, sourceLang, targetLang).then(res => sk.category = res));
         }
       }
 
       // Projects
       if (state.cv.projects) {
         for (let proj of state.cv.projects) {
-          if (proj.title) proj.title = await translateTextOnline(proj.title, sourceLang, targetLang);
-          if (proj.description) proj.description = await translateTextOnline(proj.description, sourceLang, targetLang);
+          if (proj.title) tasks.push(translateTextOnline(proj.title, sourceLang, targetLang).then(res => proj.title = res));
+          if (proj.description) tasks.push(translateTextOnline(proj.description, sourceLang, targetLang).then(res => proj.description = res));
         }
       }
 
-      // Languages & Certs
-      if (state.cv.languages) state.cv.languages = await translateTextOnline(state.cv.languages, sourceLang, targetLang);
-      if (state.cv.certifications) state.cv.certifications = await translateTextOnline(state.cv.certifications, sourceLang, targetLang);
+      // Languages & Certifications
+      if (state.cv.languages) tasks.push(translateTextOnline(state.cv.languages, sourceLang, targetLang).then(res => state.cv.languages = res));
+      if (state.cv.certifications) tasks.push(translateTextOnline(state.cv.certifications, sourceLang, targetLang).then(res => state.cv.certifications = res));
 
-      // Switch UI language after translation completes
-      setLanguage(targetLang);
-      renderFormFromState();
-      renderPreview();
-      calculateAtsScore();
-      saveStateToStorage();
+      await Promise.all(tasks);
 
     } catch (err) {
       console.error('Translation error:', err);
     } finally {
       if (el.translationLoader) el.translationLoader.style.display = 'none';
-      el.btnAutoTranslate.disabled = false;
+      if (el.btnAutoTranslate) el.btnAutoTranslate.disabled = false;
     }
   }
 
@@ -471,7 +728,8 @@
     }
   }
 
-  function setLanguage(lang) {
+  async function setLanguage(lang, autoTranslate = true) {
+    const sourceLang = state.lang;
     state.lang = lang;
     document.body.dir = lang === 'he' ? 'rtl' : 'ltr';
     document.documentElement.lang = lang;
@@ -479,15 +737,21 @@
     el.btnLangHe.classList.toggle('active', lang === 'he');
     el.btnLangEn.classList.toggle('active', lang === 'en');
     
-    if (el.lblTranslate) {
-      el.lblTranslate.textContent = lang === 'he' ? 'תרגם לאנגלית' : 'Translate to Hebrew';
-    }
-
     if (lang === 'en' && state.fontFamily.includes('Heebo')) {
       state.fontFamily = "'Inter', sans-serif";
-      el.selectFontFamily.value = state.fontFamily;
+      if (el.selectFontFamily) el.selectFontFamily.value = state.fontFamily;
+    } else if (lang === 'he' && state.fontFamily.includes('Inter')) {
+      state.fontFamily = "'Heebo', 'Inter', sans-serif";
+      if (el.selectFontFamily) el.selectFontFamily.value = state.fontFamily;
     }
 
+    updateUILanguage(lang);
+
+    if (autoTranslate && sourceLang !== lang) {
+      await translateCVContent(lang, sourceLang);
+    }
+
+    renderFormFromState();
     renderPreview();
     calculateAtsScore();
     saveStateToStorage();
@@ -642,7 +906,7 @@
           </div>
           <div class="form-group">
             <label>${state.lang === 'he' ? 'שנים' : 'Dates'}</label>
-            <input type="text" class="edu-dates" value="${escapeHtml(item.startDate + ' - ' + item.endDate)}" data-idx="${idx}">
+            <input type="text" class="edu-dates" value="${escapeHtml((item.startDate || '') + (item.endDate ? ' - ' + item.endDate : ''))}" data-idx="${idx}">
           </div>
           <div class="form-group span-2">
             <label>${state.lang === 'he' ? 'פירוט נוסף' : 'Details'}</label>
@@ -913,9 +1177,11 @@
 
   function renderAll() {
     document.body.dir = state.lang === 'he' ? 'rtl' : 'ltr';
+    document.documentElement.lang = state.lang;
     el.btnLangHe.classList.toggle('active', state.lang === 'he');
     el.btnLangEn.classList.toggle('active', state.lang === 'en');
     
+    updateUILanguage(state.lang);
     applyTheme();
     setAccentColor(state.accentColor);
 
@@ -969,7 +1235,7 @@
         saveStateToStorage();
         alert(state.lang === 'he' ? 'הנתונים נטענו בהצלחה!' : 'CV Data Imported Successfully!');
       } catch (err) {
-        alert('קובץ JSON לא תקין.');
+        alert(state.lang === 'he' ? 'קובץ JSON לא תקין.' : 'Invalid JSON File.');
       }
     };
     reader.readAsText(file);
