@@ -21,12 +21,30 @@
   const STORAGE_KEY = 'cv_craft_pro_state_v1';
   const el = {};
 
+  // Instant Translation Dictionary Fallbacks
+  const localTranslationDict = {
+    'ישראל ישראלי': 'Israel Israeli',
+    'Israel Israeli': 'ישראל ישראלי',
+    'תל אביב, ישראל': 'Tel Aviv, Israel',
+    'Tel Aviv, Israel': 'תל אביב, ישראל',
+    'תל אביב': 'Tel Aviv',
+    'Tel Aviv': 'תל אביב',
+    'הרצליה': 'Herzliya',
+    'Herzliya': 'הרצליה',
+    'חיפה': 'Haifa',
+    'Haifa': 'חיפה',
+    'היום': 'Present',
+    'Present': 'היום',
+    'עברית (שפת אם), אנגלית (ברמה מקצועית שוטפת)': 'Hebrew (Native), English (Fluent professional proficiency)',
+    'Hebrew (Native), English (Fluent professional proficiency)': 'עברית (שפת אם), אנגלית (ברמה מקצועית שוטפת)'
+  };
+
   // i18n UI Text Dictionary
   const i18n = {
     he: {
       logoSub: 'מחולל קורות חיים דינמי וחכם',
       atsPrefix: 'ציון ATS:',
-      translateBtn: 'תרגם לאנגלית',
+      translateBtn: 'תרגם תוכן לאנגלית',
       sampleBtn: 'דוגמה',
       exportJsonBtn: 'JSON',
       exportTxtBtn: 'TXT',
@@ -74,7 +92,7 @@
     en: {
       logoSub: 'Dynamic & Smart Resume Builder',
       atsPrefix: 'ATS Score:',
-      translateBtn: 'Translate to Hebrew',
+      translateBtn: 'Translate Content to Hebrew',
       sampleBtn: 'Sample',
       exportJsonBtn: 'JSON',
       exportTxtBtn: 'TXT',
@@ -367,7 +385,6 @@
 
   function switchLanguage(targetLang) {
     if (state.lang === targetLang) return;
-    const sourceLang = state.lang;
     state.lang = targetLang;
     
     document.body.dir = targetLang === 'he' ? 'rtl' : 'ltr';
@@ -381,15 +398,25 @@
     if (targetLang === 'en' && state.fontFamily.includes('Heebo')) {
       state.fontFamily = "'Inter', sans-serif";
       el.selectFontFamily.value = state.fontFamily;
+    } else if (targetLang === 'he' && state.fontFamily.includes('Inter')) {
+      state.fontFamily = "'Heebo', 'Inter', sans-serif";
+      el.selectFontFamily.value = state.fontFamily;
     }
 
-    // Automatically trigger translation when switching languages
-    translateCVContent(targetLang, sourceLang);
+    renderPreview();
+    calculateAtsScore();
+    saveStateToStorage();
   }
 
   // --- REAL-TIME TRANSLATION ENGINE ---
   async function translateTextOnline(text, fromLang, toLang) {
     if (!text || text.trim() === '') return text;
+
+    // Check local dictionary first
+    if (localTranslationDict[text.trim()]) {
+      return localTranslationDict[text.trim()];
+    }
+
     try {
       const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${fromLang}|${toLang}`;
       const res = await fetch(url);
@@ -403,23 +430,8 @@
     return text;
   }
 
-  function isUsingSampleData(cv, sourceLang) {
-    if (!cv || !cv.personal) return true;
-    const name = (cv.personal.fullName || '').trim();
-    return !name || name === 'ישראל ישראלי' || name === 'Israel Israeli';
-  }
-
   async function translateCVContent(targetLang, sourceLang) {
     if (targetLang === sourceLang) return;
-
-    if (isUsingSampleData(state.cv, sourceLang)) {
-      state.cv = JSON.parse(JSON.stringify(targetLang === 'en' ? sampleDataEnglish : sampleDataHebrew));
-      renderFormFromState();
-      renderPreview();
-      calculateAtsScore();
-      saveStateToStorage();
-      return;
-    }
 
     if (el.translationLoader) el.translationLoader.style.display = 'flex';
     if (el.btnAutoTranslate) el.btnAutoTranslate.disabled = true;
@@ -427,16 +439,10 @@
     try {
       const tasks = [];
 
-      // Personal Details (fullName, jobTitle, location)
+      // Personal Details
       if (state.cv.personal) {
         if (state.cv.personal.fullName) {
-          if (state.cv.personal.fullName === 'ישראל ישראלי' && targetLang === 'en') {
-            state.cv.personal.fullName = 'Israel Israeli';
-          } else if (state.cv.personal.fullName === 'Israel Israeli' && targetLang === 'he') {
-            state.cv.personal.fullName = 'ישראל ישראלי';
-          } else {
-            tasks.push(translateTextOnline(state.cv.personal.fullName, sourceLang, targetLang).then(res => state.cv.personal.fullName = res));
-          }
+          tasks.push(translateTextOnline(state.cv.personal.fullName, sourceLang, targetLang).then(res => state.cv.personal.fullName = res));
         }
         if (state.cv.personal.jobTitle) {
           tasks.push(translateTextOnline(state.cv.personal.jobTitle, sourceLang, targetLang).then(res => state.cv.personal.jobTitle = res));
@@ -495,6 +501,8 @@
 
       await Promise.all(tasks);
 
+      // Switch language view
+      switchLanguage(targetLang);
       renderFormFromState();
       renderPreview();
       calculateAtsScore();
