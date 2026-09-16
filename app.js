@@ -1,9 +1,187 @@
 /* ==========================================================================
-   CV Craft PRO - Main Application Logic & Translation Engine
+   CV Craft PRO - Main Application Logic & Feature Suite
    ========================================================================== */
 
 (function () {
   'use strict';
+
+  // --- UI DICTIONARY (i18n) ---
+  const i18n = {
+    he: {
+      logoSub: 'מחולל קורות חיים דינמי וחכם',
+      atsPrefix: 'ציון ATS:',
+      btnProfile: 'שמור גרסה',
+      translateBtn: 'תרגם אוטומטית',
+      sampleBtn: 'דוגמה',
+      exportJsonBtn: 'JSON',
+      exportTxtBtn: 'TXT',
+      importBtn: 'טען',
+      exportPdfBtn: 'ייצוא ל-PDF',
+      tabContent: 'תוכן',
+      tabTemplates: 'תבניות',
+      tabDesign: 'עיצוב',
+      tabTips: 'ניתוח ATS',
+      tabJdMatch: 'התאמה למשרה',
+      tabCoverLetter: 'מכתב מקדים',
+      accPersonal: 'פרטים אישיים',
+      accSummary: 'תמצית מקצועית (About)',
+      accExperience: 'ניסיון תעסוקתי',
+      accEducation: 'השכלה ולימודים',
+      accSkills: 'כישורים וטכנולוגיות',
+      accProjects: 'פרויקטים בולטים',
+      accExtras: 'שפות והסמכות',
+      lblFullName: 'שם מלא *',
+      phFullName: 'ישראל ישראלי',
+      lblJobTitle: 'תואר מקצועי / הגדרת תפקיד *',
+      phJobTitle: 'Senior Full-Stack Developer',
+      lblEmail: 'אימייל',
+      phEmail: 'israel@example.com',
+      lblPhone: 'טלפון',
+      phPhone: '050-1234567',
+      lblLocation: 'עיר / מיקום',
+      phLocation: 'תל אביב, ישראל',
+      lblLinkedin: 'קישור LinkedIn',
+      phLinkedin: 'linkedin.com/in/username',
+      lblGithub: 'קישור GitHub / קורות חיים',
+      phGithub: 'github.com/username',
+      lblWebsite: 'אתר אישי / פורטפוליו',
+      phWebsite: 'mywebsite.com',
+      lblSummaryDesc: 'פסקה קצרה וממוקדת המדגישה את הניסיון והערך המרכזי שלך',
+      lblAiEnhance: 'שדרג ניסוח',
+      phSummary: 'מפתח תוכנה בכיר עם מעל 6 שנות ניסיון בפיתוח מערכות WEB מורכבות, ארכיטקטורת ענן והובלת צוותים...',
+      lblAddExperience: 'הוסף תפקיד',
+      lblAddEducation: 'הוסף השכלה',
+      lblAddSkillCat: 'הוסף קטגוריית כישורים',
+      lblAddProject: 'הוסף פרויקט',
+      lblLanguages: 'שפות (מופרדות בפסיקים)',
+      phLanguages: 'עברית (שפת אם), אנגלית (ברמה גבוהה מאוד)',
+      lblCertifications: 'הסמכות ותעודות (מופרדות בפסיקים או בשורות חדשות)',
+      phCertifications: 'AWS Certified Solutions Architect\nGoogle Cloud Professional Developer',
+      headingTemplates: 'בחר תבנית עיצוב לקורות החיים',
+      subTemplates: 'כל התבניות מותאמות לסריקת ATS ומיועדות להדפסה נקייה',
+      tplModernTitle: 'Modern Tech (מומלץ)',
+      tplModernDesc: 'עיצוב מודרני דו-עמודתי עם קו הדגשה צבעוני, קריא ומרשים.',
+      tplAtsTitle: 'ATS Classic',
+      tplAtsDesc: 'תבנית קלאסית בטור יחיד. 100% מותאמת לסורקי מערכות גיוס אוטומטיות.',
+      tplMinimalTitle: 'Minimalist Executive',
+      tplMinimalDesc: 'טיפוגרפיה נקיה ויוקרתית עם מרווחים נדיבים, מתאימה לתפקידי ניהול.',
+      tplCreativeTitle: 'Creative Accent',
+      tplCreativeDesc: 'עיצוב עם כותרת בולטת ותגיות צבעוניות לכישורים.',
+      headingDesign: 'התאמה עיצובית',
+      lblAccentColor: 'צבע הדגש (Accent Color)',
+      lblFontFamily: 'גופן (Font Family)',
+      lblFontSizeTitle: 'גודל גופן בבסיס המסמך:',
+      lblSpacingTitle: 'צפיפות המרווחים:',
+      headingTips: '📊 ניתוח התאמה למערכות סינון (ATS Score)',
+      subTips: 'ניתוח בזמן אמת של איכות קורות החיים לפי קריטריונים של מגייסים',
+      headingJd: '🎯 סורק התאמה למודעת דרושים (JD Matcher)',
+      subJd: 'הדבק תיאור משרה וגלה אילו מילות מפתח חסרות בקורות החיים שלך',
+      lblJdInput: 'תיאור המשרה (Job Description)',
+      btnAnalyzeJd: 'נתח התאמה למשרה',
+      lblJdScoreTitle: 'ציון התאמה למשרה',
+      lblJdScoreDesc: 'מבוסס על סריקת מילות מפתח וכישורים נדרשים במודעה.',
+      lblFoundKwTitle: '✅ מילות מפתח שנמצאו:',
+      lblMissingKwTitle: '⚠️ מילות מפתח חסרות (לחץ להוספה מהירה):',
+      headingCl: '✉️ מחולל מכתב מקדים (Cover Letter)',
+      subCl: 'צור מכתב פנייה מרשים ומותאם אישית למעסיק בלחיצת כפתור',
+      lblClCompany: 'שם החברה המיועדת',
+      phClCompany: 'Microsoft / Google / Startup',
+      lblClRole: 'תפקיד מבוקש',
+      phClRole: 'Senior Full-Stack Developer',
+      btnGenerateCl: 'ייצר מכתב מקדים',
+      lblClResult: 'תוכן המכתב המקדים (ניתן לעריכה)',
+      btnCopyCl: 'העתק טקסט',
+      translationLoader: 'מתרגם תוכן...',
+      saveStatus: 'נשמר בדפדפן'
+    },
+    en: {
+      logoSub: 'Dynamic & Smart Resume Builder',
+      atsPrefix: 'ATS Score:',
+      btnProfile: 'Save Version',
+      translateBtn: 'Auto Translate',
+      sampleBtn: 'Sample',
+      exportJsonBtn: 'JSON',
+      exportTxtBtn: 'TXT',
+      importBtn: 'Import',
+      exportPdfBtn: 'Export PDF',
+      tabContent: 'Content',
+      tabTemplates: 'Templates',
+      tabDesign: 'Design',
+      tabTips: 'ATS Analysis',
+      tabJdMatch: 'JD Match',
+      tabCoverLetter: 'Cover Letter',
+      accPersonal: 'Personal Details',
+      accSummary: 'Professional Summary',
+      accExperience: 'Work Experience',
+      accEducation: 'Education',
+      accSkills: 'Technical Skills',
+      accProjects: 'Featured Projects',
+      accExtras: 'Languages & Certifications',
+      lblFullName: 'Full Name *',
+      phFullName: 'Israel Israeli',
+      lblJobTitle: 'Professional Title / Role *',
+      phJobTitle: 'Senior Full-Stack Engineer',
+      lblEmail: 'Email',
+      phEmail: 'israel.dev@example.com',
+      lblPhone: 'Phone',
+      phPhone: '+972-54-1234567',
+      lblLocation: 'City / Location',
+      phLocation: 'Tel Aviv, Israel',
+      lblLinkedin: 'LinkedIn Link',
+      phLinkedin: 'linkedin.com/in/username',
+      lblGithub: 'GitHub / Portfolio Link',
+      phGithub: 'github.com/username',
+      lblWebsite: 'Personal Website',
+      phWebsite: 'mywebsite.com',
+      lblSummaryDesc: 'Concise summary highlighting your key experience and core value',
+      lblAiEnhance: 'Enhance with AI',
+      phSummary: 'Senior Full-Stack Developer with 7+ years of experience in cloud architecture, web systems, and technical team leadership...',
+      lblAddExperience: 'Add Position',
+      lblAddEducation: 'Add Education',
+      lblAddSkillCat: 'Add Skill Category',
+      lblAddProject: 'Add Project',
+      lblLanguages: 'Languages (comma separated)',
+      phLanguages: 'Hebrew (Native), English (Fluent)',
+      lblCertifications: 'Certifications & Credentials (comma or line separated)',
+      phCertifications: 'AWS Certified Solutions Architect\nGoogle Cloud Professional Developer',
+      headingTemplates: 'Choose Resume Template',
+      subTemplates: 'All templates are ATS-optimized and print-ready',
+      tplModernTitle: 'Modern Tech (Recommended)',
+      tplModernDesc: 'Modern two-column design with colorful accent line, clear and impressive.',
+      tplAtsTitle: 'ATS Classic',
+      tplAtsDesc: 'Classic single-column template. 100% optimized for automated ATS parsers.',
+      tplMinimalTitle: 'Minimalist Executive',
+      tplMinimalDesc: 'Clean executive typography with generous margins, ideal for management.',
+      tplCreativeTitle: 'Creative Accent',
+      tplCreativeDesc: 'Distinctive layout with prominent headers and colored skill tags.',
+      headingDesign: 'Design Customization',
+      lblAccentColor: 'Accent Color',
+      lblFontFamily: 'Font Family',
+      lblFontSizeTitle: 'Base Font Size:',
+      lblSpacingTitle: 'Spacing Density:',
+      headingTips: '📊 ATS Match Analysis',
+      subTips: 'Real-time analysis of resume quality based on recruiter criteria',
+      headingJd: '🎯 Job Description Keyword Matcher',
+      subJd: 'Paste a job description to scan for missing ATS keywords',
+      lblJdInput: 'Job Description Text',
+      btnAnalyzeJd: 'Analyze JD Match',
+      lblJdScoreTitle: 'Job Match Score',
+      lblJdScoreDesc: 'Based on keyword density & required skills in job post.',
+      lblFoundKwTitle: '✅ Matched Keywords Found:',
+      lblMissingKwTitle: '⚠️ Missing Keywords (click to add):',
+      headingCl: '✉️ Cover Letter Generator',
+      subCl: 'Draft a targeted cover letter based on your experience',
+      lblClCompany: 'Target Company Name',
+      phClCompany: 'Microsoft / Google / Startup',
+      lblClRole: 'Target Role Title',
+      phClRole: 'Senior Full-Stack Developer',
+      btnGenerateCl: 'Generate Cover Letter',
+      lblClResult: 'Cover Letter Content (Editable)',
+      btnCopyCl: 'Copy Text',
+      translationLoader: 'Translating content...',
+      saveStatus: 'Saved in browser'
+    }
+  };
 
   // --- STATE ---
   let state = {
@@ -15,130 +193,24 @@
     fontSize: 14,
     spacing: 1,
     zoom: 1,
+    sectionOrder: ['personal', 'summary', 'experiences', 'education', 'skills', 'projects', 'extras'],
+    currentProfile: 'default',
+    profiles: {
+      'default': JSON.parse(JSON.stringify(sampleDataHebrew))
+    },
     cv: JSON.parse(JSON.stringify(sampleDataHebrew))
   };
 
-  const STORAGE_KEY = 'cv_craft_pro_state_v1';
+  // LocalStorage Key
+  const STORAGE_KEY = 'cv_craft_pro_state_v2';
+
+  // DOM Cache
   const el = {};
 
-  // Instant Translation Dictionary Fallbacks
-  const localTranslationDict = {
-    'ישראל ישראלי': 'Israel Israeli',
-    'Israel Israeli': 'ישראל ישראלי',
-    'תל אביב, ישראל': 'Tel Aviv, Israel',
-    'Tel Aviv, Israel': 'תל אביב, ישראל',
-    'תל אביב': 'Tel Aviv',
-    'Tel Aviv': 'תל אביב',
-    'הרצליה': 'Herzliya',
-    'Herzliya': 'הרצליה',
-    'חיפה': 'Haifa',
-    'Haifa': 'חיפה',
-    'היום': 'Present',
-    'Present': 'היום',
-    'עברית (שפת אם), אנגלית (ברמה מקצועית שוטפת)': 'Hebrew (Native), English (Fluent professional proficiency)',
-    'Hebrew (Native), English (Fluent professional proficiency)': 'עברית (שפת אם), אנגלית (ברמה מקצועית שוטפת)'
-  };
+  // Cache for translation results
+  const translationCache = new Map();
 
-  // i18n UI Text Dictionary
-  const i18n = {
-    he: {
-      logoSub: 'מחולל קורות חיים דינמי וחכם',
-      atsPrefix: 'ציון ATS:',
-      translateBtn: 'תרגם תוכן לאנגלית',
-      sampleBtn: 'דוגמה',
-      exportJsonBtn: 'JSON',
-      exportTxtBtn: 'TXT',
-      importBtn: 'טען',
-      printBtn: 'ייצוא ל-PDF',
-      tabContent: 'תוכן',
-      tabTemplates: 'תבניות',
-      tabDesign: 'עיצוב וגופנים',
-      tabTips: 'ניתוח ATS',
-      secPersonal: 'פרטים אישיים',
-      secSummary: 'תמצית מקצועית (About)',
-      secExperience: 'ניסיון תעסוקתי',
-      secEducation: 'השכלה ולימודים',
-      secSkills: 'כישורים וטכנולוגיות',
-      secProjects: 'פרויקטים בולטים',
-      secExtras: 'שפות והסמכות',
-      lblFullName: 'שם מלא *',
-      lblJobTitle: 'תואר מקצועי / הגדרת תפקיד *',
-      lblEmail: 'אימייל',
-      lblPhone: 'טלפון',
-      lblLocation: 'עיר / מיקום',
-      lblLinkedin: 'קישור LinkedIn',
-      lblGithub: 'קישור GitHub / קורות חיים',
-      lblWebsite: 'אתר אישי / פורטפוליו',
-      lblSummaryText: 'פסקה קצרה וממוקדת המדגישה את הניסיון והערך המרכזי שלך',
-      btnAiEnhance: 'שדרג ניסוח',
-      btnAddExp: 'הוסף תפקיד',
-      btnAddEdu: 'הוסף השכלה',
-      btnAddSkill: 'הוסף קטגוריית כישורים',
-      btnAddProj: 'הוסף פרויקט',
-      lblLanguages: 'שפות (מופרדות בפסיקים)',
-      lblCerts: 'הסמכות ותעודות (מופרדות בפסיקים או בשורות חדשות)',
-      headingTemplates: 'בחר תבנית עיצוב לקורות החיים',
-      subTemplates: 'כל התבניות מותאמות לסריקת ATS ומיועדות להדפסה נקייה',
-      headingDesign: 'התאמה עיצובית',
-      lblAccentColor: 'צבע הדגש (Accent Color)',
-      lblFontFamily: 'גופן (Font Family)',
-      lblFontSize: 'גודל גופן בבסיס המסמך:',
-      lblSpacing: 'צפיפות המרווחים:',
-      headingAtsTab: '📊 ניתוח התאמה למערכות סינון (ATS Score)',
-      subAtsTab: 'ניתוח בזמן אמת של איכות קורות החיים לפי קריטריונים של מגייסים',
-      savedText: 'נשמר בדפדפן',
-      translatingText: 'מתרגם תוכן...'
-    },
-    en: {
-      logoSub: 'Dynamic & Smart Resume Builder',
-      atsPrefix: 'ATS Score:',
-      translateBtn: 'Translate Content to Hebrew',
-      sampleBtn: 'Sample',
-      exportJsonBtn: 'JSON',
-      exportTxtBtn: 'TXT',
-      importBtn: 'Load',
-      printBtn: 'Export PDF',
-      tabContent: 'Content',
-      tabTemplates: 'Templates',
-      tabDesign: 'Design & Fonts',
-      tabTips: 'ATS Score',
-      secPersonal: 'Personal Details',
-      secSummary: 'Professional Summary',
-      secExperience: 'Work Experience',
-      secEducation: 'Education',
-      secSkills: 'Technical Skills',
-      secProjects: 'Projects',
-      secExtras: 'Languages & Certifications',
-      lblFullName: 'Full Name *',
-      lblJobTitle: 'Professional Title *',
-      lblEmail: 'Email',
-      lblPhone: 'Phone',
-      lblLocation: 'Location / City',
-      lblLinkedin: 'LinkedIn Profile URL',
-      lblGithub: 'GitHub / Portfolio URL',
-      lblWebsite: 'Personal Website URL',
-      lblSummaryText: 'Concise summary highlighting your core tech expertise and value',
-      btnAiEnhance: 'Polish Text',
-      btnAddExp: 'Add Role',
-      btnAddEdu: 'Add Education',
-      btnAddSkill: 'Add Skill Category',
-      btnAddProj: 'Add Project',
-      lblLanguages: 'Languages (comma separated)',
-      lblCerts: 'Certifications (comma separated or new lines)',
-      headingTemplates: 'Choose Resume Template',
-      subTemplates: 'All templates are 100% ATS-friendly and print-optimized',
-      headingDesign: 'Design & Typography',
-      lblAccentColor: 'Accent Color',
-      lblFontFamily: 'Font Family',
-      lblFontSize: 'Base Font Size:',
-      lblSpacing: 'Line Spacing Density:',
-      headingAtsTab: '📊 ATS Compatibility Analysis',
-      subAtsTab: 'Real-time resume evaluation based on technical recruiter metrics',
-      savedText: 'Saved locally',
-      translatingText: 'Translating content...'
-    }
-  };
-
+  // Initialize
   function init() {
     cacheDOMElements();
     loadStateFromStorage();
@@ -158,7 +230,11 @@
     el.inputImportJson = document.getElementById('input-import-json');
     el.btnPrint = document.getElementById('btn-print');
 
-    // ATS Score Badge
+    // Profile Manager
+    el.selectProfile = document.getElementById('select-profile');
+    el.btnSaveProfile = document.getElementById('btn-save-profile');
+
+    // ATS Score
     el.atsScoreVal = document.getElementById('ats-score-val');
     el.atsScoreFill = document.getElementById('ats-score-fill');
     el.atsSuggestionsList = document.getElementById('ats-suggestions-list');
@@ -166,7 +242,7 @@
     // Navigation Tabs
     el.navTabs = document.querySelectorAll('.nav-tab');
     el.tabContents = document.querySelectorAll('.tab-content');
-    el.accordionHeaders = document.querySelectorAll('.accordion-header');
+    el.accordionContainer = document.getElementById('accordion-container');
 
     // Form Personal Fields
     el.fieldFullName = document.getElementById('field-fullName');
@@ -194,7 +270,7 @@
     el.btnAddSkillCat = document.getElementById('btn-add-skill-cat');
     el.btnAddProject = document.getElementById('btn-add-project');
 
-    // Templates Cards
+    // Templates Picker Cards
     el.templateCards = document.querySelectorAll('.template-card');
 
     // Design Controls
@@ -206,23 +282,39 @@
     el.sliderSpacing = document.getElementById('slider-spacing');
     el.valSpacing = document.getElementById('val-spacing');
 
-    // Zoom & Status
+    // Zoom Controls & Status
     el.btnZoomOut = document.getElementById('btn-zoom-out');
     el.btnZoomIn = document.getElementById('btn-zoom-in');
     el.btnZoomReset = document.getElementById('btn-zoom-reset');
     el.zoomLevelText = document.getElementById('zoom-level');
     el.translationLoader = document.getElementById('translation-loader');
 
-    // Resume Preview Element
+    // JD Matcher Elements
+    el.fieldJdText = document.getElementById('field-jd-text');
+    el.btnAnalyzeJd = document.getElementById('btn-analyze-jd');
+    el.jdAnalysisResult = document.getElementById('jd-analysis-result');
+    el.valJdScore = document.getElementById('val-jd-score');
+    el.foundKeywordsList = document.getElementById('found-keywords-list');
+    el.missingKeywordsList = document.getElementById('missing-keywords-list');
+
+    // Cover Letter Elements
+    el.fieldClCompany = document.getElementById('field-cl-company');
+    el.fieldClRole = document.getElementById('field-cl-role');
+    el.btnGenerateCl = document.getElementById('btn-generate-cl');
+    el.btnCopyCl = document.getElementById('btn-copy-cl');
+    el.fieldClText = document.getElementById('field-cl-text');
+
+    // Resume Preview
     el.resumePreview = document.getElementById('resume-preview');
   }
 
   // --- LOCAL STORAGE ---
   function saveStateToStorage() {
     try {
+      state.profiles[state.currentProfile] = JSON.parse(JSON.stringify(state.cv));
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch (e) {
-      console.warn('LocalStorage save error:', e);
+      console.warn('LocalStorage error:', e);
     }
   }
 
@@ -233,18 +325,15 @@
         state = { ...state, ...JSON.parse(saved) };
       }
     } catch (e) {
-      console.warn('LocalStorage load error:', e);
+      console.warn('Load state error:', e);
     }
   }
 
-  // --- EVENT BINDING ---
+  // --- EVENT BINDINGS ---
   function bindEvents() {
-    el.btnLangHe.addEventListener('click', () => switchLanguage('he'));
-    el.btnLangEn.addEventListener('click', () => switchLanguage('en'));
-    el.btnAutoTranslate.addEventListener('click', () => {
-      const targetLang = state.lang === 'he' ? 'en' : 'he';
-      translateCVContent(targetLang, state.lang);
-    });
+    el.btnLangHe.addEventListener('click', () => setLanguage('he', true));
+    el.btnLangEn.addEventListener('click', () => setLanguage('en', true));
+    el.btnAutoTranslate.addEventListener('click', () => setLanguage(state.lang === 'he' ? 'en' : 'he', true));
 
     if (el.btnThemeToggle) {
       el.btnThemeToggle.addEventListener('click', toggleTheme);
@@ -259,6 +348,14 @@
       saveStateToStorage();
     });
 
+    // Profile Management Events
+    if (el.selectProfile) {
+      el.selectProfile.addEventListener('change', (e) => loadProfile(e.target.value));
+    }
+    if (el.btnSaveProfile) {
+      el.btnSaveProfile.addEventListener('click', saveNewProfile);
+    }
+
     el.btnExportJson.addEventListener('click', exportJson);
     el.btnExportTxt.addEventListener('click', exportTxt);
     el.inputImportJson.addEventListener('change', importJson);
@@ -268,21 +365,23 @@
       el.btnAiEnhanceSummary.addEventListener('click', aiEnhanceSummary);
     }
 
+    // JD Matcher & Cover Letter Events
+    if (el.btnAnalyzeJd) el.btnAnalyzeJd.addEventListener('click', analyzeJd);
+    if (el.btnGenerateCl) el.btnGenerateCl.addEventListener('click', generateCoverLetter);
+    if (el.btnCopyCl) el.btnCopyCl.addEventListener('click', copyCoverLetterToClipboard);
+
     el.navTabs.forEach(tab => {
       tab.addEventListener('click', () => {
         const targetTab = tab.dataset.tab;
         el.navTabs.forEach(t => t.classList.remove('active'));
         el.tabContents.forEach(c => c.classList.remove('active'));
         tab.classList.add('active');
-        document.getElementById(`tab-${targetTab}`).classList.add('active');
+        const targetEl = document.getElementById(`tab-${targetTab}`);
+        if (targetEl) targetEl.classList.add('active');
       });
     });
 
-    el.accordionHeaders.forEach(header => {
-      header.addEventListener('click', () => {
-        header.closest('.accordion-item').classList.toggle('expanded');
-      });
-    });
+    bindAccordionEvents();
 
     bindFormInput(el.fieldFullName, 'personal', 'fullName');
     bindFormInput(el.fieldJobTitle, 'personal', 'jobTitle');
@@ -350,6 +449,53 @@
     });
   }
 
+  function bindAccordionEvents() {
+    document.querySelectorAll('.accordion-header').forEach(header => {
+      header.addEventListener('click', (e) => {
+        if (e.target.closest('.btn-reorder')) return; // ignore click on up/down arrows
+        header.closest('.accordion-item').classList.toggle('expanded');
+      });
+    });
+
+    document.querySelectorAll('.btn-move-up').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        moveSection(btn.dataset.section, -1);
+      });
+    });
+
+    document.querySelectorAll('.btn-move-down').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        moveSection(btn.dataset.section, 1);
+      });
+    });
+  }
+
+  function moveSection(sectionKey, delta) {
+    const idx = state.sectionOrder.indexOf(sectionKey);
+    if (idx === -1) return;
+    const newIdx = idx + delta;
+    if (newIdx < 0 || newIdx >= state.sectionOrder.length) return;
+
+    // Swap in sectionOrder array
+    const temp = state.sectionOrder[idx];
+    state.sectionOrder[idx] = state.sectionOrder[newIdx];
+    state.sectionOrder[newIdx] = temp;
+
+    renderAccordionOrder();
+    renderPreview();
+    saveStateToStorage();
+  }
+
+  function renderAccordionOrder() {
+    if (!el.accordionContainer) return;
+    state.sectionOrder.forEach(secKey => {
+      const item = document.getElementById(`acc-${secKey}`);
+      if (item) el.accordionContainer.appendChild(item);
+    });
+  }
+
   function bindFormInput(inputElement, statePath1, statePath2) {
     if (!inputElement) return;
     inputElement.addEventListener('input', (e) => {
@@ -364,6 +510,39 @@
     });
   }
 
+  // --- MULTI-PROFILE MANAGER ---
+  function renderProfilesDropdown() {
+    if (!el.selectProfile) return;
+    el.selectProfile.innerHTML = Object.keys(state.profiles).map(pKey => `
+      <option value="${pKey}" ${pKey === state.currentProfile ? 'selected' : ''}>
+        ${pKey === 'default' ? (state.lang === 'he' ? 'פרופיל ראשי (Default)' : 'Main Profile') : escapeHtml(pKey)}
+      </option>
+    `).join('');
+  }
+
+  function saveNewProfile() {
+    const isHe = state.lang === 'he';
+    const profileName = prompt(isHe ? 'הכנס שם לגרסת קורות החיים (למשל: "גרסה למוביל צוות"):' : 'Enter a name for this CV version (e.g. "Lead Developer"):');
+    if (!profileName || profileName.trim() === '') return;
+
+    const trimmed = profileName.trim();
+    state.profiles[trimmed] = JSON.parse(JSON.stringify(state.cv));
+    state.currentProfile = trimmed;
+    renderProfilesDropdown();
+    saveStateToStorage();
+    alert(isHe ? `הגרסה "${trimmed}" שנשמרה בהצלחה!` : `Version "${trimmed}" saved successfully!`);
+  }
+
+  function loadProfile(profileKey) {
+    if (!state.profiles[profileKey]) return;
+    state.currentProfile = profileKey;
+    state.cv = JSON.parse(JSON.stringify(state.profiles[profileKey]));
+    renderFormFromState();
+    renderPreview();
+    calculateAtsScore();
+    saveStateToStorage();
+  }
+
   // --- UI INTERNATIONALIZATION (i18n) ---
   function updateUILanguage(lang) {
     const t = i18n[lang] || i18n.he;
@@ -372,49 +551,253 @@
       const elem = document.getElementById(id);
       if (elem) elem.textContent = text;
     };
+    const setPh = (id, placeholder) => {
+      const elem = document.getElementById(id);
+      if (elem) elem.placeholder = placeholder;
+    };
 
     setTxt('lbl-logo-sub', t.logoSub);
     setTxt('lbl-ats-prefix', t.atsPrefix);
+    setTxt('lbl-btn-profile', t.btnProfile);
     setTxt('lbl-translate', t.translateBtn);
     setTxt('lbl-btn-sample', t.sampleBtn);
     setTxt('lbl-btn-json', t.exportJsonBtn);
     setTxt('lbl-btn-txt', t.exportTxtBtn);
     setTxt('lbl-btn-import', t.importBtn);
-    setTxt('lbl-btn-print', t.printBtn);
+    setTxt('lbl-btn-print', t.exportPdfBtn);
+
+    setTxt('lbl-tab-content', t.tabContent);
+    setTxt('lbl-tab-templates', t.tabTemplates);
+    setTxt('lbl-tab-design', t.tabDesign);
+    setTxt('lbl-tab-tips', t.tabTips);
+    setTxt('lbl-tab-jd-match', t.tabJdMatch);
+    setTxt('lbl-tab-cover-letter', t.tabCoverLetter);
+
+    setTxt('lbl-acc-personal', t.accPersonal);
+    setTxt('lbl-acc-summary', t.accSummary);
+    setTxt('lbl-acc-experience', t.accExperience);
+    setTxt('lbl-acc-education', t.accEducation);
+    setTxt('lbl-acc-skills', t.accSkills);
+    setTxt('lbl-acc-projects', t.accProjects);
+    setTxt('lbl-acc-extras', t.accExtras);
+
+    setTxt('lbl-fullName', t.lblFullName);
+    setPh('field-fullName', t.phFullName);
+    setTxt('lbl-jobTitle', t.lblJobTitle);
+    setPh('field-jobTitle', t.phJobTitle);
+    setTxt('lbl-email', t.lblEmail);
+    setPh('field-email', t.phEmail);
+    setTxt('lbl-phone', t.lblPhone);
+    setPh('field-phone', t.phPhone);
+    setTxt('lbl-location', t.lblLocation);
+    setPh('field-location', t.phLocation);
+    setTxt('lbl-linkedin', t.lblLinkedin);
+    setPh('field-linkedin', t.phLinkedin);
+    setTxt('lbl-github', t.lblGithub);
+    setPh('field-github', t.phGithub);
+    setTxt('lbl-website', t.lblWebsite);
+    setPh('field-website', t.phWebsite);
+
+    setTxt('lbl-summary-desc', t.lblSummaryDesc);
+    setTxt('lbl-ai-enhance', t.lblAiEnhance);
+    setPh('field-summary', t.phSummary);
+
+    setTxt('lbl-add-experience', t.lblAddExperience);
+    setTxt('lbl-add-education', t.lblAddEducation);
+    setTxt('lbl-add-skill-cat', t.lblAddSkillCat);
+    setTxt('lbl-add-project', t.lblAddProject);
+
+    setTxt('lbl-languages', t.lblLanguages);
+    setPh('field-languages', t.phLanguages);
+    setTxt('lbl-certifications', t.lblCertifications);
+    setPh('field-certifications', t.phCertifications);
+
+    setTxt('lbl-heading-templates', t.headingTemplates);
+    setTxt('lbl-sub-templates', t.subTemplates);
+    setTxt('lbl-tpl-modern-title', t.tplModernTitle);
+    setTxt('lbl-tpl-modern-desc', t.tplModernDesc);
+    setTxt('lbl-tpl-ats-title', t.tplAtsTitle);
+    setTxt('lbl-tpl-ats-desc', t.tplAtsDesc);
+    setTxt('lbl-tpl-minimal-title', t.tplMinimalTitle);
+    setTxt('lbl-tpl-minimal-desc', t.tplMinimalDesc);
+    setTxt('lbl-tpl-creative-title', t.tplCreativeTitle);
+    setTxt('lbl-tpl-creative-desc', t.tplCreativeDesc);
+
+    setTxt('lbl-heading-design', t.headingDesign);
+    setTxt('lbl-accent-color', t.lblAccentColor);
+    setTxt('lbl-font-family', t.lblFontFamily);
+    setTxt('lbl-font-size-title', t.lblFontSizeTitle);
+    setTxt('lbl-spacing-title', t.lblSpacingTitle);
+
+    setTxt('lbl-heading-tips', t.headingTips);
+    setTxt('lbl-sub-tips', t.subTips);
+
+    setTxt('lbl-heading-jd', t.headingJd);
+    setTxt('lbl-sub-jd', t.subJd);
+    setTxt('lbl-jd-input', t.lblJdInput);
+    setTxt('lbl-btn-analyze-jd', t.btnAnalyzeJd);
+    setTxt('lbl-jd-score-title', t.lblJdScoreTitle);
+    setTxt('lbl-jd-score-desc', t.lblJdScoreDesc);
+    setTxt('lbl-found-kw-title', t.lblFoundKwTitle);
+    setTxt('lbl-missing-kw-title', t.lblMissingKwTitle);
+
+    setTxt('lbl-heading-cl', t.headingCl);
+    setTxt('lbl-sub-cl', t.subCl);
+    setTxt('lbl-cl-company', t.lblClCompany);
+    setPh('field-cl-company', t.phClCompany);
+    setTxt('lbl-cl-role', t.lblClRole);
+    setPh('field-cl-role', t.phClRole);
+    setTxt('lbl-btn-generate-cl', t.btnGenerateCl);
+    setTxt('lbl-cl-result', t.lblClResult);
+    setTxt('lbl-btn-copy-cl', t.btnCopyCl);
+
+    setTxt('lbl-translation-loader', t.translationLoader);
+    setTxt('lbl-save-status', t.saveStatus);
+    
+    renderProfilesDropdown();
   }
 
-  function switchLanguage(targetLang) {
-    if (state.lang === targetLang) return;
-    state.lang = targetLang;
-    
-    document.body.dir = targetLang === 'he' ? 'rtl' : 'ltr';
-    document.documentElement.lang = targetLang;
-
-    el.btnLangHe.classList.toggle('active', targetLang === 'he');
-    el.btnLangEn.classList.toggle('active', targetLang === 'en');
-
-    updateUILanguage(targetLang);
-
-    if (targetLang === 'en' && state.fontFamily.includes('Heebo')) {
-      state.fontFamily = "'Inter', sans-serif";
-      el.selectFontFamily.value = state.fontFamily;
-    } else if (targetLang === 'he' && state.fontFamily.includes('Inter')) {
-      state.fontFamily = "'Heebo', 'Inter', sans-serif";
-      el.selectFontFamily.value = state.fontFamily;
+  // --- JOB DESCRIPTION MATCHER ---
+  function analyzeJd() {
+    const jdText = (el.fieldJdText.value || '').trim();
+    if (!jdText) {
+      alert(state.lang === 'he' ? 'אנא הדבק תיאור משרה לניתוח.' : 'Please paste job description text to analyze.');
+      return;
     }
 
+    const commonSkills = [
+      'React', 'Node.js', 'TypeScript', 'JavaScript', 'Python', 'AWS', 'Docker', 'Kubernetes',
+      'Microservices', 'GraphQL', 'REST', 'PostgreSQL', 'MongoDB', 'Redis', 'CI/CD', 'Git',
+      'HTML5', 'CSS3', 'TailwindCSS', 'Redux', 'Next.js', 'Express', 'Java', 'C#', 'SQL',
+      'System Design', 'Agile', 'Scrum', 'Linux', 'GCP', 'Azure', 'Unit Testing', 'Jest'
+    ];
+
+    const cvString = JSON.stringify(state.cv).toLowerCase();
+    const jdLower = jdText.toLowerCase();
+
+    const targetKeywords = commonSkills.filter(sk => jdLower.includes(sk.toLowerCase()));
+    if (targetKeywords.length === 0) {
+      // Extract general words if no specific tech keywords detected
+      const words = jdText.match(/\b[A-Z][a-zA-Z0-9+#.]{2,}\b/g) || [];
+      const uniqueWords = [...new Set(words)].slice(0, 10);
+      targetKeywords.push(...uniqueWords);
+    }
+
+    const found = [];
+    const missing = [];
+
+    targetKeywords.forEach(kw => {
+      if (cvString.includes(kw.toLowerCase())) {
+        found.push(kw);
+      } else {
+        missing.push(kw);
+      }
+    });
+
+    const total = targetKeywords.length || 1;
+    const score = Math.round((found.length / total) * 100);
+
+    el.valJdScore.textContent = `${score}%`;
+    
+    el.foundKeywordsList.innerHTML = found.length > 0 
+      ? found.map(kw => `<span class="tag-chip found"><i class="fa-solid fa-circle-check"></i> ${escapeHtml(kw)}</span>`).join('')
+      : `<span style="color:var(--text-dim); font-size:0.85rem;">${state.lang === 'he' ? 'לא נמצאו מילות מפתח תואמות' : 'No matching keywords found'}</span>`;
+
+    el.missingKeywordsList.innerHTML = missing.length > 0 
+      ? missing.map(kw => `<span class="tag-chip missing" data-kw="${escapeHtml(kw)}" title="${state.lang === 'he' ? 'לחץ להוספת כישור זה לקורות החיים' : 'Click to add this skill to CV'}"><i class="fa-solid fa-plus"></i> ${escapeHtml(kw)}</span>`).join('')
+      : `<span style="color:var(--text-dim); font-size:0.85rem;">${state.lang === 'he' ? 'מפת מצוינת! לא נמצאו מילות מפתח חסרות' : 'Great match! No missing keywords detected'}</span>`;
+
+    // Bind click to missing tags for 1-click addition
+    document.querySelectorAll('.tag-chip.missing').forEach(chip => {
+      chip.addEventListener('click', (e) => {
+        const kw = e.currentTarget.dataset.kw;
+        addSkillToCv(kw);
+        e.currentTarget.className = 'tag-chip found';
+        e.currentTarget.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${escapeHtml(kw)}`;
+      });
+    });
+
+    el.jdAnalysisResult.style.display = 'block';
+  }
+
+  function addSkillToCv(skillName) {
+    if (!state.cv.skills || state.cv.skills.length === 0) {
+      state.cv.skills = [{ id: 'sk-' + Date.now(), category: state.lang === 'he' ? 'כישורים נדרשים' : 'Required Skills', items: skillName }];
+    } else {
+      state.cv.skills[0].items += `, ${skillName}`;
+    }
+    renderDynamicLists();
     renderPreview();
     calculateAtsScore();
     saveStateToStorage();
   }
 
+  // --- COVER LETTER GENERATOR ---
+  function generateCoverLetter() {
+    const isHe = state.lang === 'he';
+    const company = (el.fieldClCompany.value || '').trim() || (isHe ? 'חברה מובילה' : 'Target Company');
+    const role = (el.fieldClRole.value || '').trim() || state.cv.personal.jobTitle || (isHe ? 'Senior Developer' : 'Senior Developer');
+    const name = state.cv.personal.fullName || (isHe ? 'ישראל ישראלי' : 'Israel Israeli');
+    const phone = state.cv.personal.phone || '';
+    const email = state.cv.personal.email || '';
+
+    let letterText = '';
+
+    if (isHe) {
+      letterText = `לכבוד: צוות הגיוס / המנהל המגייס ב-${company}
+נושא: הגשת מועמדות לתפקיד ${role}
+
+שלום רב,
+
+אני פונה אליכם בהתלהבות רבה בנוגע לתפקיד ${role} ב-${company}. עם מעל 7 שנות ניסיון בפיתוח מערכות תוכנה, הובלת ארכיטקטורה וניהול צוותים, אני מאמין כי הניסיון והכישורים שלי מתאימים באופן מדויק לאתגרים שלכם.
+
+במהלך תפקידיי האחרונים, הובלתי פיתוח פלטפורמות ענן מורכבות, ביצעתי אופטימיזציה לביצועי מערכות ושיפרתי את מהירות פיתוח המוצר בצורה משמעותית. אני מתמחה בעבודה עם הטכנולוגיות המתקדמות ביותר בשוק, ושם דגש רב על איכות קוד, סקלאביליות וחווית משתמש מעולה.
+
+אני מעריך מאוד את העשייה והחדשנות של ${company}, וירצה מאוד להביא את הניסיון, התשוקה והערך המוסף שלי לצוות שלכם.
+
+אשמח לתאם שיחה או פגישה על מנת להציג את ניסיוני בהרחבה.
+
+בברכה,
+${name}
+${phone ? 'טלפון: ' + phone : ''}
+${email ? 'אימייל: ' + email : ''}`;
+    } else {
+      letterText = `To: Hiring Team / Hiring Manager at ${company}
+Subject: Application for ${role} position
+
+Dear Hiring Manager,
+
+I am writing to express my strong enthusiasm for the ${role} position at ${company}. With over 7 years of hands-on experience in software engineering, cloud architecture, and technical team leadership, I am confident in my ability to deliver immediate value to your engineering team.
+
+In my recent roles, I have successfully architected scalable cloud platforms, optimized client-side rendering performance by over 45%, and mentored developer teams to deliver mission-critical software. I specialize in modern Full-Stack technologies and thrive in fast-paced environments where innovation and code quality are paramount.
+
+I greatly admire ${company}'s work and technological impact, and I would be thrilled to contribute my experience and problem-solving mindset to your goals.
+
+Thank you for your time and consideration. I look forward to the opportunity to discuss my background with you further.
+
+Sincerely,
+${name}
+${phone ? 'Phone: ' + phone : ''}
+${email ? 'Email: ' + email : ''}`;
+    }
+
+    el.fieldClText.value = letterText;
+  }
+
+  function copyCoverLetterToClipboard() {
+    const txt = el.fieldClText.value;
+    if (!txt) return;
+    navigator.clipboard.writeText(txt).then(() => {
+      alert(state.lang === 'he' ? 'המכתב המקדים הועתק ללוח בהצלחה!' : 'Cover Letter copied to clipboard!');
+    });
+  }
+
   // --- REAL-TIME TRANSLATION ENGINE ---
   async function translateTextOnline(text, fromLang, toLang) {
     if (!text || text.trim() === '') return text;
-
-    // Check local dictionary first
-    if (localTranslationDict[text.trim()]) {
-      return localTranslationDict[text.trim()];
+    const cacheKey = `${fromLang}_${toLang}_${text.trim()}`;
+    if (translationCache.has(cacheKey)) {
+      return translationCache.get(cacheKey);
     }
 
     try {
@@ -422,10 +805,12 @@
       const res = await fetch(url);
       const data = await res.json();
       if (data && data.responseData && data.responseData.translatedText) {
-        return data.responseData.translatedText;
+        const result = data.responseData.translatedText;
+        translationCache.set(cacheKey, result);
+        return result;
       }
     } catch (e) {
-      console.warn('Online translation error, falling back to local:', e);
+      console.warn('Online translation error:', e);
     }
     return text;
   }
@@ -439,11 +824,8 @@
     try {
       const tasks = [];
 
-      // Personal Details
+      // Personal Title & Location
       if (state.cv.personal) {
-        if (state.cv.personal.fullName) {
-          tasks.push(translateTextOnline(state.cv.personal.fullName, sourceLang, targetLang).then(res => state.cv.personal.fullName = res));
-        }
         if (state.cv.personal.jobTitle) {
           tasks.push(translateTextOnline(state.cv.personal.jobTitle, sourceLang, targetLang).then(res => state.cv.personal.jobTitle = res));
         }
@@ -501,13 +883,6 @@
 
       await Promise.all(tasks);
 
-      // Switch language view
-      switchLanguage(targetLang);
-      renderFormFromState();
-      renderPreview();
-      calculateAtsScore();
-      saveStateToStorage();
-
     } catch (err) {
       console.error('Translation error:', err);
     } finally {
@@ -516,13 +891,13 @@
     }
   }
 
-  // --- AI ENHANCE SUMMARY ---
+  // --- AI ENHANCE SUMMARY SIMULATOR ---
   function aiEnhanceSummary() {
     const isHe = state.lang === 'he';
     if (isHe) {
-      state.cv.summary = 'מפתח Full-Stack בכיר בעל ניסיון מוכח של מעל 7 שנים בהובלת ארכיטקטורת תוכנה, פיתוח מערכות ענן מבוזרות ב-React, Node.js ו-AWS. מומחה באופטימיזציית ביצועי Client-Side, הקטנת זמני טעינה ב-45% והובלת צוותים טכנולוגיים להישגים יוצאי דופן.';
+      state.cv.summary = 'מפתח Full-Stack בכיר בעל ניסיון מוכח של מעל 6 שנות בהובלת ארכיטקטורת תוכנה, פיתוח מערכות ענן מבוזרות ב-React, Node.js ו-AWS. מומחה באופטימיזציית ביצועי Client-Side, הקטנת זמני טעינה ב-45% והובלת צוותים טכנולוגיים להישגים יוצאי דופן.';
     } else {
-      state.cv.summary = 'Senior Full-Stack Developer with over 7 years of expertise designing and architecting scalable cloud platforms in React, Node.js, and AWS. Specialized in client-side rendering optimization, reducing page load times by 45%, and leading engineering teams to deliver mission-critical software.';
+      state.cv.summary = 'Senior Full-Stack Developer with 6+ years of expertise designing and architecting scalable cloud platforms in React, Node.js, and AWS. Proven track record of optimizing client-side rendering latency by 45% and leading cross-functional developer teams to deliver mission-critical software.';
     }
     el.fieldSummary.value = state.cv.summary;
     renderPreview();
@@ -618,6 +993,7 @@
       });
     }
 
+    // Render ATS UI
     score = Math.min(100, Math.max(0, score));
     if (el.atsScoreVal) el.atsScoreVal.textContent = `${score}%`;
     if (el.atsScoreFill) el.atsScoreFill.style.width = `${score}%`;
@@ -651,6 +1027,35 @@
     }
   }
 
+  async function setLanguage(lang, autoTranslate = true) {
+    const sourceLang = state.lang;
+    state.lang = lang;
+    document.body.dir = lang === 'he' ? 'rtl' : 'ltr';
+    document.documentElement.lang = lang;
+
+    el.btnLangHe.classList.toggle('active', lang === 'he');
+    el.btnLangEn.classList.toggle('active', lang === 'en');
+    
+    if (lang === 'en' && state.fontFamily.includes('Heebo')) {
+      state.fontFamily = "'Inter', sans-serif";
+      if (el.selectFontFamily) el.selectFontFamily.value = state.fontFamily;
+    } else if (lang === 'he' && state.fontFamily.includes('Inter')) {
+      state.fontFamily = "'Heebo', 'Inter', sans-serif";
+      if (el.selectFontFamily) el.selectFontFamily.value = state.fontFamily;
+    }
+
+    updateUILanguage(lang);
+
+    if (autoTranslate && sourceLang !== lang) {
+      await translateCVContent(lang, sourceLang);
+    }
+
+    renderFormFromState();
+    renderPreview();
+    calculateAtsScore();
+    saveStateToStorage();
+  }
+
   function setAccentColor(colorHex) {
     state.accentColor = colorHex;
     document.documentElement.style.setProperty('--accent-color', colorHex);
@@ -668,6 +1073,7 @@
     el.zoomLevelText.textContent = `${Math.round(state.zoom * 100)}%`;
   }
 
+  // Add Dynamic List Items
   function addExperienceItem() {
     state.cv.experiences.push({
       id: 'exp-' + Date.now(),
@@ -745,10 +1151,12 @@
       c.classList.toggle('active', c.dataset.template === state.template);
     });
 
+    renderAccordionOrder();
     renderDynamicLists();
   }
 
   function renderDynamicLists() {
+    // Experience List
     el.experienceList.innerHTML = (state.cv.experiences || []).map((item, idx) => `
       <div class="dynamic-card" data-id="${item.id}">
         <div class="dynamic-card-header">
@@ -780,6 +1188,7 @@
       </div>
     `).join('');
 
+    // Education List
     el.educationList.innerHTML = (state.cv.education || []).map((item, idx) => `
       <div class="dynamic-card" data-id="${item.id}">
         <div class="dynamic-card-header">
@@ -797,7 +1206,7 @@
           </div>
           <div class="form-group">
             <label>${state.lang === 'he' ? 'שנים' : 'Dates'}</label>
-            <input type="text" class="edu-dates" value="${escapeHtml(item.startDate + ' - ' + item.endDate)}" data-idx="${idx}">
+            <input type="text" class="edu-dates" value="${escapeHtml((item.startDate || '') + (item.endDate ? ' - ' + item.endDate : ''))}" data-idx="${idx}">
           </div>
           <div class="form-group span-2">
             <label>${state.lang === 'he' ? 'פירוט נוסף' : 'Details'}</label>
@@ -807,6 +1216,7 @@
       </div>
     `).join('');
 
+    // Skill List
     el.skillsList.innerHTML = (state.cv.skills || []).map((item, idx) => `
       <div class="dynamic-card" data-id="${item.id}">
         <div class="dynamic-card-header">
@@ -826,6 +1236,7 @@
       </div>
     `).join('');
 
+    // Project List
     el.projectsList.innerHTML = (state.cv.projects || []).map((item, idx) => `
       <div class="dynamic-card" data-id="${item.id}">
         <div class="dynamic-card-header">
@@ -957,115 +1368,119 @@
       p.website ? `<span class="cv-contact-item"><i class="fa-solid fa-globe"></i> ${escapeHtml(p.website)}</span>` : ''
     ].filter(Boolean).join('');
 
-    const summaryHTML = state.cv.summary ? `
-      <section class="cv-section">
-        <h3 class="cv-section-title"><i class="fa-solid fa-user-tie"></i> ${isHe ? 'תמצית מקצועית' : 'Professional Summary'}</h3>
-        <p class="cv-summary-text">${escapeHtml(state.cv.summary)}</p>
-      </section>
-    ` : '';
+    // Render Sections according to sectionOrder
+    const sectionGenerators = {
+      summary: () => state.cv.summary ? `
+        <section class="cv-section">
+          <h3 class="cv-section-title"><i class="fa-solid fa-user-tie"></i> ${isHe ? 'תמצית מקצועית' : 'Professional Summary'}</h3>
+          <p class="cv-summary-text">${escapeHtml(state.cv.summary)}</p>
+        </section>
+      ` : '',
 
-    const experiencesHTML = (state.cv.experiences || []).length > 0 ? `
-      <section class="cv-section">
-        <h3 class="cv-section-title"><i class="fa-solid fa-briefcase"></i> ${isHe ? 'ניסיון מקצועי' : 'Work Experience'}</h3>
-        ${state.cv.experiences.map(exp => `
-          <div class="cv-item">
-            <div class="cv-item-header">
-              <div>
-                <span class="cv-item-title">${escapeHtml(exp.jobTitle)}</span>
-                <span class="cv-item-subtitle"> | ${escapeHtml(exp.company)}</span>
+      experiences: () => (state.cv.experiences || []).length > 0 ? `
+        <section class="cv-section">
+          <h3 class="cv-section-title"><i class="fa-solid fa-briefcase"></i> ${isHe ? 'ניסיון מקצועי' : 'Work Experience'}</h3>
+          ${state.cv.experiences.map(exp => `
+            <div class="cv-item">
+              <div class="cv-item-header">
+                <div>
+                  <span class="cv-item-title">${escapeHtml(exp.jobTitle)}</span>
+                  <span class="cv-item-subtitle"> | ${escapeHtml(exp.company)}</span>
+                </div>
+                <span class="cv-item-date">${escapeHtml(exp.startDate)} - ${escapeHtml(exp.endDate)}</span>
               </div>
-              <span class="cv-item-date">${escapeHtml(exp.startDate)} - ${escapeHtml(exp.endDate)}</span>
+              ${exp.description ? `<div class="cv-item-desc">${escapeHtml(exp.description)}</div>` : ''}
             </div>
-            ${exp.description ? `<div class="cv-item-desc">${escapeHtml(exp.description)}</div>` : ''}
-          </div>
-        `).join('')}
-      </section>
-    ` : '';
+          `).join('')}
+        </section>
+      ` : '',
 
-    const educationHTML = (state.cv.education || []).length > 0 ? `
-      <section class="cv-section">
-        <h3 class="cv-section-title"><i class="fa-solid fa-graduation-cap"></i> ${isHe ? 'השכלה ולימודים' : 'Education'}</h3>
-        ${state.cv.education.map(edu => `
-          <div class="cv-item">
-            <div class="cv-item-header">
-              <div>
-                <span class="cv-item-title">${escapeHtml(edu.degree)}</span>
-                <span class="cv-item-subtitle"> - ${escapeHtml(edu.institution)}</span>
+      education: () => (state.cv.education || []).length > 0 ? `
+        <section class="cv-section">
+          <h3 class="cv-section-title"><i class="fa-solid fa-graduation-cap"></i> ${isHe ? 'השכלה ולימודים' : 'Education'}</h3>
+          ${state.cv.education.map(edu => `
+            <div class="cv-item">
+              <div class="cv-item-header">
+                <div>
+                  <span class="cv-item-title">${escapeHtml(edu.degree)}</span>
+                  <span class="cv-item-subtitle"> - ${escapeHtml(edu.institution)}</span>
+                </div>
+                <span class="cv-item-date">${escapeHtml(edu.startDate)} ${edu.endDate ? '- ' + escapeHtml(edu.endDate) : ''}</span>
               </div>
-              <span class="cv-item-date">${escapeHtml(edu.startDate)} ${edu.endDate ? '- ' + escapeHtml(edu.endDate) : ''}</span>
+              ${edu.details ? `<div class="cv-item-desc">${escapeHtml(edu.details)}</div>` : ''}
             </div>
-            ${edu.details ? `<div class="cv-item-desc">${escapeHtml(edu.details)}</div>` : ''}
-          </div>
-        `).join('')}
-      </section>
-    ` : '';
+          `).join('')}
+        </section>
+      ` : '',
 
-    const skillsHTML = (state.cv.skills || []).length > 0 ? `
-      <section class="cv-section">
-        <h3 class="cv-section-title"><i class="fa-solid fa-screwdriver-wrench"></i> ${isHe ? 'כישורים וטכנולוגיות' : 'Technical Skills'}</h3>
-        ${state.cv.skills.map(sk => `
-          <div class="cv-skills-group">
-            <span class="cv-skill-cat">${escapeHtml(sk.category)}:</span>
-            <span class="cv-skill-items">${escapeHtml(sk.items)}</span>
-          </div>
-        `).join('')}
-      </section>
-    ` : '';
+      skills: () => (state.cv.skills || []).length > 0 ? `
+        <section class="cv-section">
+          <h3 class="cv-section-title"><i class="fa-solid fa-screwdriver-wrench"></i> ${isHe ? 'כישורים וטכנולוגיות' : 'Technical Skills'}</h3>
+          ${state.cv.skills.map(sk => `
+            <div class="cv-skills-group">
+              <span class="cv-skill-cat">${escapeHtml(sk.category)}:</span>
+              <span class="cv-skill-items">${escapeHtml(sk.items)}</span>
+            </div>
+          `).join('')}
+        </section>
+      ` : '',
 
-    const projectsHTML = (state.cv.projects || []).length > 0 ? `
-      <section class="cv-section">
-        <h3 class="cv-section-title"><i class="fa-solid fa-diagram-project"></i> ${isHe ? 'פרויקטים בולטים' : 'Key Projects'}</h3>
-        ${state.cv.projects.map(proj => `
-          <div class="cv-item">
-            <div class="cv-item-header">
-              <div>
-                <span class="cv-item-title">${escapeHtml(proj.title)}</span>
-                ${proj.tech ? `<span class="cv-item-subtitle"> (${escapeHtml(proj.tech)})</span>` : ''}
+      projects: () => (state.cv.projects || []).length > 0 ? `
+        <section class="cv-section">
+          <h3 class="cv-section-title"><i class="fa-solid fa-diagram-project"></i> ${isHe ? 'פרויקטים בולטים' : 'Key Projects'}</h3>
+          ${state.cv.projects.map(proj => `
+            <div class="cv-item">
+              <div class="cv-item-header">
+                <div>
+                  <span class="cv-item-title">${escapeHtml(proj.title)}</span>
+                  ${proj.tech ? `<span class="cv-item-subtitle"> (${escapeHtml(proj.tech)})</span>` : ''}
+                </div>
+                ${proj.link ? `<span class="cv-item-date">${escapeHtml(proj.link)}</span>` : ''}
               </div>
-              ${proj.link ? `<span class="cv-item-date">${escapeHtml(proj.link)}</span>` : ''}
+              ${proj.description ? `<div class="cv-item-desc">${escapeHtml(proj.description)}</div>` : ''}
             </div>
-            ${proj.description ? `<div class="cv-item-desc">${escapeHtml(proj.description)}</div>` : ''}
-          </div>
-        `).join('')}
-      </section>
-    ` : '';
+          `).join('')}
+        </section>
+      ` : '',
 
-    const extrasHTML = (state.cv.languages || state.cv.certifications) ? `
-      <section class="cv-section">
-        <h3 class="cv-section-title"><i class="fa-solid fa-certificate"></i> ${isHe ? 'שפות והסמכות' : 'Languages & Certifications'}</h3>
-        ${state.cv.languages ? `
-          <div class="cv-skills-group">
-            <span class="cv-skill-cat">${isHe ? 'שפות' : 'Languages'}:</span>
-            <span class="cv-skill-items">${escapeHtml(state.cv.languages)}</span>
-          </div>
-        ` : ''}
-        ${state.cv.certifications ? `
-          <div class="cv-skills-group">
-            <span class="cv-skill-cat">${isHe ? 'הסמכות' : 'Certifications'}:</span>
-            <span class="cv-skill-items">${escapeHtml(state.cv.certifications)}</span>
-          </div>
-        ` : ''}
-      </section>
-    ` : '';
+      extras: () => (state.cv.languages || state.cv.certifications) ? `
+        <section class="cv-section">
+          <h3 class="cv-section-title"><i class="fa-solid fa-certificate"></i> ${isHe ? 'שפות והסמכות' : 'Languages & Certifications'}</h3>
+          ${state.cv.languages ? `
+            <div class="cv-skills-group">
+              <span class="cv-skill-cat">${isHe ? 'שפות' : 'Languages'}:</span>
+              <span class="cv-skill-items">${escapeHtml(state.cv.languages)}</span>
+            </div>
+          ` : ''}
+          ${state.cv.certifications ? `
+            <div class="cv-skills-group">
+              <span class="cv-skill-cat">${isHe ? 'הסמכות' : 'Certifications'}:</span>
+              <span class="cv-skill-items">${escapeHtml(state.cv.certifications)}</span>
+            </div>
+          ` : ''}
+        </section>
+      ` : ''
+    };
+
+    const orderedBodyHTML = state.sectionOrder
+      .filter(secKey => secKey !== 'personal')
+      .map(secKey => sectionGenerators[secKey] ? sectionGenerators[secKey]() : '')
+      .join('');
 
     el.resumePreview.innerHTML = `
       <header class="cv-header">
-        <h1 class="cv-name">${escapeHtml(p.fullName || (isHe ? 'שם מלא' : 'Full Name'))}</h1>
+        <h1 class="cv-name">${escapeHtml(p.fullName || (isHe ? 'ישראל ישראלי' : 'Israel Israeli'))}</h1>
         <div class="cv-title">${escapeHtml(p.jobTitle || (isHe ? 'הגדרת תפקיד' : 'Professional Title'))}</div>
         <div class="cv-contact-bar">${contactItemsHTML}</div>
       </header>
 
-      ${summaryHTML}
-      ${experiencesHTML}
-      ${educationHTML}
-      ${skillsHTML}
-      ${projectsHTML}
-      ${extrasHTML}
+      ${orderedBodyHTML}
     `;
   }
 
   function renderAll() {
     document.body.dir = state.lang === 'he' ? 'rtl' : 'ltr';
+    document.documentElement.lang = state.lang;
     el.btnLangHe.classList.toggle('active', state.lang === 'he');
     el.btnLangEn.classList.toggle('active', state.lang === 'en');
     
@@ -1123,7 +1538,7 @@
         saveStateToStorage();
         alert(state.lang === 'he' ? 'הנתונים נטענו בהצלחה!' : 'CV Data Imported Successfully!');
       } catch (err) {
-        alert('קובץ JSON לא תקין.');
+        alert(state.lang === 'he' ? 'קובץ JSON לא תקין.' : 'Invalid JSON File.');
       }
     };
     reader.readAsText(file);

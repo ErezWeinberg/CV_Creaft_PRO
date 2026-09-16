@@ -35,6 +35,16 @@
         <div class="ats-score-bar"><div id="ats-score-fill" style="width: 85%;"></div></div>
       </div>
 
+      <!-- Multi-Profile Version Manager -->
+      <div class="profile-manager-group" title="ניהול גרסאות / פרופילים">
+        <select id="select-profile" class="form-select select-profile">
+          <option value="default">פרופיל ראשי (Default)</option>
+        </select>
+        <button id="btn-save-profile" class="btn btn-secondary" title="שמור גרסת קורות חיים חדשה">
+          <i class="fa-solid fa-bookmark"></i> <span id="lbl-btn-profile">שמור גרסה</span>
+        </button>
+      </div>
+
       <!-- Language Switcher -->
       <div class="lang-toggle-group" title="שפת קורות החיים">
         <button id="btn-lang-he" class="btn-toggle active" data-lang="he">עברית (RTL)</button>
@@ -90,23 +100,33 @@
           <i class="fa-solid fa-table-cells-large"></i> <span id="lbl-tab-templates">תבניות</span>
         </button>
         <button class="nav-tab" data-tab="design">
-          <i class="fa-solid fa-palette"></i> <span id="lbl-tab-design">עיצוב וגופנים</span>
+          <i class="fa-solid fa-palette"></i> <span id="lbl-tab-design">עיצוב</span>
         </button>
         <button class="nav-tab" data-tab="tips">
           <i class="fa-solid fa-chart-simple"></i> <span id="lbl-tab-tips">ניתוח ATS</span>
+        </button>
+        <button class="nav-tab" data-tab="jd-match">
+          <i class="fa-solid fa-crosshairs"></i> <span id="lbl-tab-jd-match">התאמה למשרה</span>
+        </button>
+        <button class="nav-tab" data-tab="cover-letter">
+          <i class="fa-solid fa-envelope-open-text"></i> <span id="lbl-tab-cover-letter">מכתב מקדים</span>
         </button>
       </nav>
 
       <!-- TAB 1: Content Editor -->
       <div class="tab-content active" id="tab-content">
-        <div class="accordion">
+        <div class="accordion" id="accordion-container">
           
           <!-- Personal Info -->
-          <div class="accordion-item expanded" id="acc-personal">
-            <button class="accordion-header">
-              <span><i class="fa-solid fa-user"></i> <span id="lbl-acc-personal">פרטים אישיים</span></span>
-              <i class="fa-solid fa-chevron-down chevron"></i>
-            </button>
+          <div class="accordion-item expanded" id="acc-personal" data-section="personal">
+            <div class="accordion-header">
+              <span class="acc-title"><i class="fa-solid fa-user"></i> <span id="lbl-acc-personal">פרטים אישיים</span></span>
+              <div class="acc-actions">
+                <button class="btn-reorder btn-move-up" data-section="personal" title="הזז למעלה"><i class="fa-solid fa-arrow-up"></i></button>
+                <button class="btn-reorder btn-move-down" data-section="personal" title="הזז למטה"><i class="fa-solid fa-arrow-down"></i></button>
+                <i class="fa-solid fa-chevron-down chevron"></i>
+              </div>
+            </div>
             <div class="accordion-body">
               <div class="form-grid">
                 <div class="form-group span-2">
@@ -146,11 +166,15 @@
           </div>
 
           <!-- Professional Summary -->
-          <div class="accordion-item" id="acc-summary">
-            <button class="accordion-header">
-              <span><i class="fa-solid fa-align-left"></i> <span id="lbl-acc-summary">תמצית מקצועית (About)</span></span>
-              <i class="fa-solid fa-chevron-down chevron"></i>
-            </button>
+          <div class="accordion-item" id="acc-summary" data-section="summary">
+            <div class="accordion-header">
+              <span class="acc-title"><i class="fa-solid fa-align-left"></i> <span id="lbl-acc-summary">תמצית מקצועית (About)</span></span>
+              <div class="acc-actions">
+                <button class="btn-reorder btn-move-up" data-section="summary" title="הזז למעלה"><i class="fa-solid fa-arrow-up"></i></button>
+                <button class="btn-reorder btn-move-down" data-section="summary" title="הזז למטה"><i class="fa-solid fa-arrow-down"></i></button>
+                <i class="fa-solid fa-chevron-down chevron"></i>
+              </div>
+            </div>
             <div class="accordion-body">
               <div class="form-group">
                 <div class="label-with-action">
@@ -165,11 +189,15 @@
           </div>
 
           <!-- Work Experience -->
-          <div class="accordion-item" id="acc-experience">
-            <button class="accordion-header">
-              <span><i class="fa-solid fa-briefcase"></i> <span id="lbl-acc-experience">ניסיון תעסוקתי</span></span>
-              <i class="fa-solid fa-chevron-down chevron"></i>
-            </button>
+          <div class="accordion-item" id="acc-experience" data-section="experiences">
+            <div class="accordion-header">
+              <span class="acc-title"><i class="fa-solid fa-briefcase"></i> <span id="lbl-acc-experience">ניסיון תעסוקתי</span></span>
+              <div class="acc-actions">
+                <button class="btn-reorder btn-move-up" data-section="experiences" title="הזז למעלה"><i class="fa-solid fa-arrow-up"></i></button>
+                <button class="btn-reorder btn-move-down" data-section="experiences" title="הזז למטה"><i class="fa-solid fa-arrow-down"></i></button>
+                <i class="fa-solid fa-chevron-down chevron"></i>
+              </div>
+            </div>
             <div class="accordion-body">
               <div id="experience-list" class="dynamic-list"></div>
               <button id="btn-add-experience" class="btn btn-add">
@@ -179,11 +207,15 @@
           </div>
 
           <!-- Education -->
-          <div class="accordion-item" id="acc-education">
-            <button class="accordion-header">
-              <span><i class="fa-solid fa-graduation-cap"></i> <span id="lbl-acc-education">השכלה ולימודים</span></span>
-              <i class="fa-solid fa-chevron-down chevron"></i>
-            </button>
+          <div class="accordion-item" id="acc-education" data-section="education">
+            <div class="accordion-header">
+              <span class="acc-title"><i class="fa-solid fa-graduation-cap"></i> <span id="lbl-acc-education">השכלה ולימודים</span></span>
+              <div class="acc-actions">
+                <button class="btn-reorder btn-move-up" data-section="education" title="הזז למעלה"><i class="fa-solid fa-arrow-up"></i></button>
+                <button class="btn-reorder btn-move-down" data-section="education" title="הזז למטה"><i class="fa-solid fa-arrow-down"></i></button>
+                <i class="fa-solid fa-chevron-down chevron"></i>
+              </div>
+            </div>
             <div class="accordion-body">
               <div id="education-list" class="dynamic-list"></div>
               <button id="btn-add-education" class="btn btn-add">
@@ -193,11 +225,15 @@
           </div>
 
           <!-- Skills -->
-          <div class="accordion-item" id="acc-skills">
-            <button class="accordion-header">
-              <span><i class="fa-solid fa-screwdriver-wrench"></i> <span id="lbl-acc-skills">כישורים וטכנולוגיות</span></span>
-              <i class="fa-solid fa-chevron-down chevron"></i>
-            </button>
+          <div class="accordion-item" id="acc-skills" data-section="skills">
+            <div class="accordion-header">
+              <span class="acc-title"><i class="fa-solid fa-screwdriver-wrench"></i> <span id="lbl-acc-skills">כישורים וטכנולוגיות</span></span>
+              <div class="acc-actions">
+                <button class="btn-reorder btn-move-up" data-section="skills" title="הזז למעלה"><i class="fa-solid fa-arrow-up"></i></button>
+                <button class="btn-reorder btn-move-down" data-section="skills" title="הזז למטה"><i class="fa-solid fa-arrow-down"></i></button>
+                <i class="fa-solid fa-chevron-down chevron"></i>
+              </div>
+            </div>
             <div class="accordion-body">
               <div id="skills-list" class="dynamic-list"></div>
               <button id="btn-add-skill-cat" class="btn btn-add">
@@ -207,11 +243,15 @@
           </div>
 
           <!-- Projects -->
-          <div class="accordion-item" id="acc-projects">
-            <button class="accordion-header">
-              <span><i class="fa-solid fa-diagram-project"></i> <span id="lbl-acc-projects">פרויקטים בולטים</span></span>
-              <i class="fa-solid fa-chevron-down chevron"></i>
-            </button>
+          <div class="accordion-item" id="acc-projects" data-section="projects">
+            <div class="accordion-header">
+              <span class="acc-title"><i class="fa-solid fa-diagram-project"></i> <span id="lbl-acc-projects">פרויקטים בולטים</span></span>
+              <div class="acc-actions">
+                <button class="btn-reorder btn-move-up" data-section="projects" title="הזז למעלה"><i class="fa-solid fa-arrow-up"></i></button>
+                <button class="btn-reorder btn-move-down" data-section="projects" title="הזז למטה"><i class="fa-solid fa-arrow-down"></i></button>
+                <i class="fa-solid fa-chevron-down chevron"></i>
+              </div>
+            </div>
             <div class="accordion-body">
               <div id="projects-list" class="dynamic-list"></div>
               <button id="btn-add-project" class="btn btn-add">
@@ -221,11 +261,15 @@
           </div>
 
           <!-- Languages & Certifications -->
-          <div class="accordion-item" id="acc-extras">
-            <button class="accordion-header">
-              <span><i class="fa-solid fa-certificate"></i> <span id="lbl-acc-extras">שפות והסמכות</span></span>
-              <i class="fa-solid fa-chevron-down chevron"></i>
-            </button>
+          <div class="accordion-item" id="acc-extras" data-section="extras">
+            <div class="accordion-header">
+              <span class="acc-title"><i class="fa-solid fa-certificate"></i> <span id="lbl-acc-extras">שפות והסמכות</span></span>
+              <div class="acc-actions">
+                <button class="btn-reorder btn-move-up" data-section="extras" title="הזז למעלה"><i class="fa-solid fa-arrow-up"></i></button>
+                <button class="btn-reorder btn-move-down" data-section="extras" title="הזז למטה"><i class="fa-solid fa-arrow-down"></i></button>
+                <i class="fa-solid fa-chevron-down chevron"></i>
+              </div>
+            </div>
             <div class="accordion-body">
               <div class="form-group">
                 <label id="lbl-languages">שפות (מופרדות בפסיקים)</label>
@@ -361,6 +405,72 @@
         
         <div id="ats-suggestions-list" class="tips-container">
           <!-- Populated live by app.js -->
+        </div>
+      </div>
+
+      <!-- TAB 5: Job Description Matcher -->
+      <div class="tab-content" id="tab-jd-match">
+        <h3 id="lbl-heading-jd">🎯 סורק התאמה למודעת דרושים (JD Matcher)</h3>
+        <p class="tab-subtitle" id="lbl-sub-jd">הדבק תיאור משרה וגלה אילו מילות מפתח חסרות בקורות החיים שלך</p>
+        
+        <div class="form-group">
+          <label id="lbl-jd-input">תיאור המשרה (Job Description)</label>
+          <textarea id="field-jd-text" rows="5" placeholder="הדבק כאן את תיאור המשרה מהמודעה..."></textarea>
+        </div>
+        
+        <button id="btn-analyze-jd" class="btn btn-primary" style="margin-bottom: 1rem;">
+          <i class="fa-solid fa-magnifying-glass-chart"></i> <span id="lbl-btn-analyze-jd">נתח התאמה למשרה</span>
+        </button>
+        
+        <div id="jd-analysis-result" style="display: none;">
+          <div class="jd-score-card">
+            <div class="jd-score-circle"><span id="val-jd-score">0%</span></div>
+            <div class="jd-score-info">
+              <h4 id="lbl-jd-score-title">ציון התאמה למשרה</h4>
+              <p id="lbl-jd-score-desc">מבוסס על סריקת מילות מפתח וכישורים נדרשים במודעה.</p>
+            </div>
+          </div>
+          
+          <div class="keywords-group">
+            <h4 id="lbl-found-kw-title">✅ מילות מפתח שנמצאו:</h4>
+            <div id="found-keywords-list" class="tags-list"></div>
+          </div>
+          
+          <div class="keywords-group" style="margin-top: 1rem;">
+            <h4 id="lbl-missing-kw-title">⚠️ מילות מפתח חסרות (לחץ להוספה מהירה):</h4>
+            <div id="missing-keywords-list" class="tags-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 6: Cover Letter Generator -->
+      <div class="tab-content" id="tab-cover-letter">
+        <h3 id="lbl-heading-cl">✉️ מחולל מכתב מקדים (Cover Letter)</h3>
+        <p class="tab-subtitle" id="lbl-sub-cl">צור מכתב פנייה מרשים ומותאם אישית למעסיק בלחיצת כפתור</p>
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label id="lbl-cl-company">שם החברה המיועדת</label>
+            <input type="text" id="field-cl-company" placeholder="Microsoft / Google / Startup">
+          </div>
+          <div class="form-group">
+            <label id="lbl-cl-role">תפקיד מבוקש</label>
+            <input type="text" id="field-cl-role" placeholder="Senior Full-Stack Developer">
+          </div>
+        </div>
+        
+        <button id="btn-generate-cl" class="btn btn-primary" style="margin-bottom: 1rem;">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> <span id="lbl-btn-generate-cl">ייצר מכתב מקדים</span>
+        </button>
+        
+        <div class="form-group">
+          <div class="label-with-action">
+            <label id="lbl-cl-result">תוכן המכתב המקדים (ניתן לעריכה)</label>
+            <button id="btn-copy-cl" class="btn-text-action" title="העתק ללוח">
+              <i class="fa-solid fa-copy"></i> <span id="lbl-btn-copy-cl">העתק טקסט</span>
+            </button>
+          </div>
+          <textarea id="field-cl-text" rows="10" placeholder="המכתב המקדים שייוצר יופיע כאן..."></textarea>
         </div>
       </div>
 
